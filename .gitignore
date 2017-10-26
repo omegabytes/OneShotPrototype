@@ -1,0 +1,9 @@
+*.zip
+*.pyc
+*.png
+.idea/
+icons/
+node_modules/
+delzip.py
+/coverage/
+appId.js
