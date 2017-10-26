@@ -4,7 +4,7 @@ var Alexa = require('alexa-sdk');
 var id = require('./appId.js'); //this probably should be handled in a config file
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
-var dndLib = require('..dndLib.js');
+var dndLib = require('./dndLib.js');
 
 exports.handler = function(event,context,callback) {
 	var alexa = Alexa.handler(event, context);
