@@ -12,3 +12,6 @@ After cloning:
 ## Additional Documentation
 [Game flowchart/notes](https://drive.google.com/file/d/0Bz3eS0BW4eyUZjBPZ0dScF9kVFE/view?usp=sharing)
 
+## Team
+Alex Gaesser
+Jason Newman
