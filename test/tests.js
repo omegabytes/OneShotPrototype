@@ -1,7 +1,6 @@
 var bst     = require('bespoken-tools');
 var assert  = require('assert');
-var id      = require('../src/appId');
-var appId = id.APP_ID;
+var appId   = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
 
 var server  = null;
 var alexa   = null;

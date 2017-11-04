@@ -3,7 +3,8 @@
 *.png
 .idea/
 icons/
-node_modules/
+/src/node_modules/
 delzip.py
 /coverage/
-appId.js
+src/package-lock.json
+src/package.json
