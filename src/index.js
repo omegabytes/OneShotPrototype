@@ -1,16 +1,16 @@
 'use strict';
 
 var Alexa = require('alexa-sdk');
-var id = require('./appId.js'); //this probably should be handled in a config file
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
 
 exports.handler = function(event,context,callback) {
 	var alexa = Alexa.handler(event, context);
-	alexa.appId = APP_ID;
+	alexa.appId = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
 	alexa.resources = languageStrings;
 	alexa.registerHandlers(handlers)
+    alexa.execute();
 };
 
 var handlers = {
