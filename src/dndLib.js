@@ -1,5 +1,6 @@
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
+var characterClasses = require('./classes.json');
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -55,3 +56,21 @@ exports.validateAndSetSlot = function(slot) {
 		return null;
 	}
 };
+
+//Character class functions
+exports.getClassStats(className) {
+	let result = "";
+	switch className {
+		case "warrior":
+			result = characterClasses.classes.warrior.stats;
+			break;
+		case "wizard":
+			result = characterClasses.classes.wizard.stats;
+			break;
+		case "rogue":
+			result = characterClasses.classes.rogue.stats;
+			break;
+	}
+
+	return result;
+}
