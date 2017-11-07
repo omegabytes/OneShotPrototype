@@ -24,7 +24,7 @@ module.exports = {
             "SKILL_NAME":                                   "TableTop Pro",  //TBD           
             "STOP_MESSAGE":                                 "Goodbye!",            
             "UNHANDLED" :                                   "I'm sorry, I didn't get that. You can try repeating that command. For help on what you can ask, say 'help'",
-            "WELCOME_MESSAGE":                              "Welcome to TableTop Pro",
+            "WELCOME_MESSAGE":                              "Welcome to TableTop Pro. Are you ready to begin?",
             "WELCOME_REPROMPT":                             "For instructions on what you can say, please say help me."     
         }
     }
