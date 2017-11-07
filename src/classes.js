@@ -1,4 +1,4 @@
-{
+module.exports = {
 	"classes": {
 		"warrior": {
 			"stats": {

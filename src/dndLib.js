@@ -1,6 +1,6 @@
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
-var characterClasses = require('./classes.json');
+var characterClasses = require('./classes');
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -57,20 +57,24 @@ exports.validateAndSetSlot = function(slot) {
 	}
 };
 
-//Character class functions
-exports.getClassStats(className) {
-	let result = "";
-	switch className {
-		case "warrior":
-			result = characterClasses.classes.warrior.stats;
-			break;
-		case "wizard":
-			result = characterClasses.classes.wizard.stats;
-			break;
-		case "rogue":
-			result = characterClasses.classes.rogue.stats;
-			break;
-	}
+// Character class functions
+// Getters
+exports.getClassList = function() {
+	return characterClasses.classes;
+};
 
-	return result;
+exports.getClassStats = function(className) {
+	return characterClasses.classes[className];
+};
+
+exports.getStat = function(className, stat) {
+	return characterClasses.classes[className].stats[stat];
+}
+
+exports.getClassAbilities = function(className) {
+	return characterClasses.classes[className].abilities;
+};
+
+exports.getClassAbility = function(className, ability) {
+	return characterClasses.classes[className].abilities[ability];
 }
