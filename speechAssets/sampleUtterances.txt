@@ -1,0 +1,3 @@
+ThiefIntent thief
+WizardIntent wizard
+WarriorIntent warrior
