@@ -64,11 +64,11 @@ const startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
 
     'AMAZON.YesIntent': function () {
-        this.handler.state = states.CHARSELECT;
+        // this.handler.state = states.CHARSELECT;
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
                                         + 'You can be a wizard, a thief, or a warrior. What do you choose?';
         this.attributes['repromptSpeech'] = 'Say wizard, thief, or warrior to choose a class, or say exit to quit';
-        this.emit(':tell', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Thanks for playing!";
@@ -98,23 +98,31 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         this.emit('NewSession'); // uses the handler in newSessionHandlers
     },
 
+    // 'CharSelectIntent': function () {
+    //
+    // },
+
     // user says thief
     'ThiefIntent' : function () {
         this.attributes['speechOutput'] = 'You chose the stealthy thief';
+        this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = thief
         // prompt user to check if they want description
         // double check to confirm choice
+
     },
 
     // user says warrior
     'WarriorIntent' : function () {
         this.attributes['speechOutput'] = 'You chose the powerful warrior';
+        this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = warrior
     },
 
     // user says wizard
     'WizardIntent' : function () {
         this.attributes['speechOutput'] = 'You chose the enigmatic wizard';
+        this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = wizard
     },
 
