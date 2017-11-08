@@ -104,7 +104,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says thief
     'ThiefIntent' : function () {
-        this.attributes['speechOutput'] = 'You chose the stealthy thief';
+        this.attributes['speechOutput'] = 'The stealthy thief prioritizes skill over brute strength. Thieves excel at precision strikes in combat, and rely on abilities to safely traverse dungeons.';
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = thief
         // prompt user to check if they want description
