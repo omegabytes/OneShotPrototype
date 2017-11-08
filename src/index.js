@@ -15,17 +15,12 @@ exports.handler = function(event,context,callback) {
 
 const states = {
     STARTMODE: '_STARTMODE',    // Beginning of game with menu, start, and help prompts
-    CHARSELECT: '_CHARSELECT'   // Prompts user to select a character, and gives info on character
+    CHARSELECT: '_CHARSELECT',  // Prompts user to select a character, and gives info on character
+    FORESTSCENE: '_FORESTSCENE' // The first encounter, where the user is described a situation and asked what to do
 };
 
 // user opens the skill, either for the first time or is returning
 const newSessionHandlers = {
-    // 'LaunchRequest': function () {
-    //     this.handler.state = "START_MODE";
-    //     this.attributes['speechOutput'] = langEN.WELCOME_MESSAGE;
-    //     this.attributes['repromptSpeech']  = langEN.WELCOME_REPROMPT;
-    //     this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    // },
     'NewSession': function () {
         this.handler.state = states.STARTMODE;
         this.attributes['speechOutput'] = langEN.WELCOME_MESSAGE;
@@ -104,8 +99,9 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says rogue
     'RogueIntent' : function () {
-        this.attributes['speechOutput'] = dndLib.getClassDescription('rogue');
-        this.emit(':tell', this.attributes['speechOutput']);
+        this.attributes['character'] = 'rogue';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('rogue') + 'Say yes to confirm, or say wizard or warrior to hear about the other classes. Say more info for detailed stats.';
+        this.emit(':ask', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = rogue
         // prompt user to check if they want description
         // double check to confirm choice
@@ -114,6 +110,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says warrior
     'WarriorIntent' : function () {
+        this.attributes['character'] = 'warrior';
         this.attributes['speechOutput'] = dndLib.getClassDescription('warrior');
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = warrior
@@ -121,9 +118,18 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says wizard
     'WizardIntent' : function () {
+        this.attributes['character'] = 'wizard';
         this.attributes['speechOutput'] = dndLib.getClassDescription('wizard');
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = wizard
+    },
+
+    'AMAZON.YesIntent': function () {
+        this.handler.state = states.FORESTSCENE;
+
+        this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins!";
+
+        this.emit(':tell', this.attributes['speechOutput']); // need to change this to an ask, and include the prompt for the next scene
     },
 
     'AMAZON.HelpIntent': function () {
