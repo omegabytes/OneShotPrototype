@@ -64,7 +64,7 @@ const startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     },
 
     'AMAZON.YesIntent': function () {
-        // this.handler.state = states.CHARSELECT;
+        this.handler.state = states.CHARSELECT;
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
                                         + 'You can be a wizard, a thief, or a warrior. What do you choose?';
         this.attributes['repromptSpeech'] = 'Say wizard, thief, or warrior to choose a class, or say exit to quit';
