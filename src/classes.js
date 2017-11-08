@@ -1,6 +1,7 @@
 module.exports = {
 	"classes": {
 		"warrior": {
+			"description": "A mighty adventurer, favoring hand to hand combat and a direct approach.",
 			"stats": {
 				"health": 25,
 				"attackBonus": 7,
@@ -16,6 +17,7 @@ module.exports = {
 			}
 		},
 		"wizard": {
+			"description": "An intelligent adventurer who makes use magical spells and a keen mind to solve problems.",
 			"stats": {
 				"health": 15,
 				"attackBonus": 5,
@@ -33,6 +35,7 @@ module.exports = {
 			}
 		},
 		"rogue": {
+			"description": "A skilled adventurer, specializing in subterfuge and misdirection.",
 			"stats": {
 				"health": 20,
 				"attackBonus": 5,
