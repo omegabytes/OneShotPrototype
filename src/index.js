@@ -67,7 +67,7 @@ const startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.YesIntent': function () {
         // this.handler.state = states.CHARSELECT;
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
-                                        + 'You can be a wizard, a thief, or a warrior. What do you choose?';
+                                        + 'You can be a wizard, a rogue, or a warrior. What do you choose?';
         this.attributes['repromptSpeech'] = 'Say wizard, thief, or warrior to choose a class, or say exit to quit';
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
@@ -103,10 +103,9 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
     //
     // },
 
-    // user says thief
-    'ThiefIntent' : function () {
-        // var health = dndLib.getStat('thief', 'health').toString();
-        this.attributes['speechOutput'] = 'You chose the stealthy thief with 25 starting health';
+    // user says rogue
+    'RogueIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.getClassDescription('rogue');
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = thief
         // prompt user to check if they want description
@@ -116,14 +115,14 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says warrior
     'WarriorIntent' : function () {
-        this.attributes['speechOutput'] = 'You chose the powerful warrior';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('warrior');
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = warrior
     },
 
     // user says wizard
     'WizardIntent' : function () {
-        this.attributes['speechOutput'] = 'You chose the enigmatic wizard';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('wizard');
         this.emit(':tell', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = wizard
     },

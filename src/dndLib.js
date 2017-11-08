@@ -47,7 +47,7 @@ exports.getClassStats = function(className) {
 
 exports.getStat = function(className, stat) {
 	return characterClasses.classes[className].stats[stat];
-}
+};
 
 exports.getClassAbilities = function(className) {
 	return characterClasses.classes[className].abilities;
@@ -55,4 +55,8 @@ exports.getClassAbilities = function(className) {
 
 exports.getClassAbility = function(className, ability) {
 	return characterClasses.classes[className].abilities[ability];
-}
+};
+
+exports.getClassDescription = function (className) {
+	return characterClasses.classes[className].description;
+};

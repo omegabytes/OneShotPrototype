@@ -13,7 +13,8 @@ module.exports = {
 				"block": "",
 				"bash": "",
 				"secondWind": ""
-			}
+			},
+			"description" : "Rogues might be ruthless criminals, sly tricksters, deadly assassins, or good hearted thieves who steal from the rich and give to the poor. Whichever way you decide to play one, you're guaranteed to have a number of tricks to help you achieve your goals."
 		},
 		"wizard": {
 			"stats": {
@@ -30,7 +31,8 @@ module.exports = {
 				"invisibility": "",
 				"stun": "",
 				"hover": ""
-			}
+			},
+			"description" : "Wizards are supreme magic-users, defined and united as a class by the spells they cast. Drawing on the subtle weave of magic that permeates the cosmos, wizards cast spells of explosive fire, arcing lightning, subtle deception, and brute-force mind control."
 		},
 		"thief": {
 			"stats": {
@@ -46,7 +48,8 @@ module.exports = {
 				"uncannyDodge": "",
 				"pickLock": "",
 				"disarmTrap": ""
-			}
+			},
+			"description" : "Warriors learn the basics of all combat styles. A combination of broad general ability and extensive specialization makes warriors superior combatants on battlefields and in dungeons alike."
 		}
 	}
 }
