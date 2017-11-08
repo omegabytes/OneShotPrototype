@@ -4,7 +4,6 @@ var Alexa = require('alexa-sdk');
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
-var classes = require('./classes');
 
 exports.handler = function(event,context,callback) {
     var alexa = Alexa.handler(event, context);
@@ -107,7 +106,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
     'RogueIntent' : function () {
         this.attributes['speechOutput'] = dndLib.getClassDescription('rogue');
         this.emit(':tell', this.attributes['speechOutput']);
-        // set a user/session attribute 'selectedChar' = thief
+        // set a user/session attribute 'selectedChar' = rogue
         // prompt user to check if they want description
         // double check to confirm choice
 
