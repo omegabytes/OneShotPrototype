@@ -1,5 +1,6 @@
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
+var characterClasses = require('./classes');
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -55,3 +56,25 @@ exports.validateAndSetSlot = function(slot) {
 		return null;
 	}
 };
+
+// Character class functions
+// Getters
+exports.getClassList = function() {
+	return characterClasses.classes;
+};
+
+exports.getClassStats = function(className) {
+	return characterClasses.classes[className];
+};
+
+exports.getStat = function(className, stat) {
+	return characterClasses.classes[className].stats[stat];
+}
+
+exports.getClassAbilities = function(className) {
+	return characterClasses.classes[className].abilities;
+};
+
+exports.getClassAbility = function(className, ability) {
+	return characterClasses.classes[className].abilities[ability];
+}
