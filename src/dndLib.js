@@ -60,3 +60,10 @@ exports.getClassAbility = function(className, ability) {
 exports.getClassDescription = function (className) {
 	return characterClasses.classes[className].description;
 };
+
+exports.getClassImages = function (className) {
+    return {
+        smallImageUrl : characterClasses.classes[className].imageSmall,
+        largeImageUrl : characterClasses.classes[className].imageLarge
+    }
+};

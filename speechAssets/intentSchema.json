@@ -10,6 +10,9 @@
 			"intent": "WizardIntent"
 		},
 		{
+			"intent": "MoreInfoIntent"
+		},
+		{
 			"intent": "Unhandled"
 		},
 		{
