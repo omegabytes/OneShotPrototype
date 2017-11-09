@@ -1,13 +1,16 @@
 {
 	"intents": [
 		{
-			"intent": "ThiefIntent"
+			"intent": "RogueIntent"
 		},
 		{
 			"intent": "WarriorIntent"
 		},
 		{
 			"intent": "WizardIntent"
+		},
+		{
+			"intent": "MoreInfoIntent"
 		},
 		{
 			"intent": "Unhandled"
