@@ -15,17 +15,12 @@ exports.handler = function(event,context,callback) {
 
 const states = {
     STARTMODE: '_STARTMODE',    // Beginning of game with menu, start, and help prompts
-    CHARSELECT: '_CHARSELECT'   // Prompts user to select a character, and gives info on character
+    CHARSELECT: '_CHARSELECT',  // Prompts user to select a character, and gives info on character
+    FORESTSCENE: '_FORESTSCENE' // The first encounter, where the user is described a situation and asked what to do
 };
 
 // user opens the skill, either for the first time or is returning
 const newSessionHandlers = {
-    // 'LaunchRequest': function () {
-    //     this.handler.state = "START_MODE";
-    //     this.attributes['speechOutput'] = langEN.WELCOME_MESSAGE;
-    //     this.attributes['repromptSpeech']  = langEN.WELCOME_REPROMPT;
-    //     this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    // },
     'NewSession': function () {
         this.handler.state = states.STARTMODE;
         this.attributes['speechOutput'] = langEN.WELCOME_MESSAGE;
@@ -66,8 +61,8 @@ const startGameHandlers = Alexa.CreateStateHandler(states.STARTMODE, {
     'AMAZON.YesIntent': function () {
         this.handler.state = states.CHARSELECT;
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
-                                        + 'You can be a wizard, a thief, or a warrior. What do you choose?';
-        this.attributes['repromptSpeech'] = 'Say wizard, thief, or warrior to choose a class, or say exit to quit';
+                                        + 'You can be a wizard, a rogue, or a warrior. What do you choose?';
+        this.attributes['repromptSpeech'] = 'Say wizard, rogue, or warrior to choose a class, or say exit to quit';
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
     'AMAZON.NoIntent': function () {
@@ -98,15 +93,12 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         this.emit('NewSession'); // uses the handler in newSessionHandlers
     },
 
-    // 'CharSelectIntent': function () {
-    //
-    // },
-
-    // user says thief
-    'ThiefIntent' : function () {
-        this.attributes['speechOutput'] = 'The stealthy thief prioritizes skill over brute strength. Thieves excel at precision strikes in combat, and rely on abilities to safely traverse dungeons.';
-        this.emit(':tell', this.attributes['speechOutput']);
-        // set a user/session attribute 'selectedChar' = thief
+    // user says rogue
+    'RogueIntent' : function () {
+        this.attributes['character'] = 'rogue';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('rogue') + ' Say yes to confirm, or say wizard or warrior to hear about the other classes. Say more info for detailed stats.';
+        this.emit(':ask', this.attributes['speechOutput']);
+        // set a user/session attribute 'selectedChar' = rogue
         // prompt user to check if they want description
         // double check to confirm choice
 
@@ -114,18 +106,59 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
 
     // user says warrior
     'WarriorIntent' : function () {
-        this.attributes['speechOutput'] = 'You chose the powerful warrior';
-        this.emit(':tell', this.attributes['speechOutput']);
+        this.attributes['character'] = 'warrior';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('warrior') + ' Say yes to confirm, or say wizard or rogue to hear about the other classes. Say more info for detailed stats.';
+        this.emit(':ask', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = warrior
     },
 
     // user says wizard
     'WizardIntent' : function () {
-        this.attributes['speechOutput'] = 'You chose the enigmatic wizard';
-        this.emit(':tell', this.attributes['speechOutput']);
+        this.attributes['character'] = 'wizard';
+        this.attributes['speechOutput'] = dndLib.getClassDescription('wizard') + ' Say yes to confirm, or say rogue or warrior to hear about the other classes. Say more info for detailed stats.';
+        this.emit(':ask', this.attributes['speechOutput']);
         // set a user/session attribute 'selectedChar' = wizard
     },
 
+    // user wants more information about a character
+    'MoreInfoIntent' : function () {
+        var cardTitle = "Info: " + this.attributes['character'];
+        var imageObject = dndLib.getClassImages(this.attributes['character']);
+
+        var cardOutput = "The " + this.attributes['character'] + " has the following attributes: " +"\n\n"
+                            + "Health:       " + dndLib.getStat(this.attributes['character'], 'health') + "\n"
+                            + "Attack bonus: " + dndLib.getStat(this.attributes['character'], 'attackBonus') + "\n"
+                            + "Damage:       " + dndLib.getStat(this.attributes['character'], 'damageDieSides') + "\n"
+                            + "Perception:   " + dndLib.getStat(this.attributes['character'], 'perception') + "\n"
+                            + "Stealth:      " + dndLib.getStat(this.attributes['character'], 'stealth') + "\n"
+                            + "Diplomacy:    " + dndLib.getStat(this.attributes['character'], 'diplomacy');
+
+        var spokenInfo = "The " + this.attributes['character'] + " has the following attributes: "
+                                + dndLib.getStat(this.attributes['character'], 'health') + " health, "
+                                + dndLib.getStat(this.attributes['character'], 'attackBonus') + " attack bonus, "
+                                + dndLib.getStat(this.attributes['character'], 'damageDieSides') + " damage, "
+                                + dndLib.getStat(this.attributes['character'], 'perception') + " perception, "
+                                + dndLib.getStat(this.attributes['character'], 'stealth') + " stealth, "
+                                + dndLib.getStat(this.attributes['character'], 'diplomacy') + " diplomacy.";
+
+        spokenInfo += " Would you like to play as the " + this.attributes['character'] + "?";
+
+        this.attributes['speechOutput'] = spokenInfo;
+        this.emit(':askWithCard', this.attributes['speechOutput'],cardTitle,cardOutput,imageObject);
+    },
+
+    'AMAZON.YesIntent': function () {
+        this.handler.state = states.FORESTSCENE;
+        this.attributes['userHealth'] = dndLib.getStat(this.attributes['character'], 'health'); // sets the health of the user
+
+        this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins!";
+
+        this.emit(':tell', this.attributes['speechOutput']); // need to change this to an ask, and include the prompt for the next scene
+    },
+    'AMAZON.NoIntent': function () {
+        this.attributes['speechOutput'] = "Okay, which character would you like to play as?";
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
     'AMAZON.HelpIntent': function () {
         // use char select specific help messages here
         this.attributes['speechOutput'] = langEN.HELP_MESSAGE;

@@ -1,3 +1,5 @@
-ThiefIntent thief
+RogueIntent rogue
 WizardIntent wizard
 WarriorIntent warrior
+MoreInfoIntent info
+MoreInfoIntent more info
