@@ -36,7 +36,9 @@ const newSessionHandlers = {
         }
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
-
+    'NewGameIntent': function () {
+        this.emit('AMAZON.NoIntent');
+    },
     'ContinueGameIntent': function () {
         this.handler.state = this.attributes['gameState'];
     },
