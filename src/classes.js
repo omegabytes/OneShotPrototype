@@ -19,7 +19,7 @@ module.exports = {
 			}
 		},
 		"wizard": {
-			"description": "An intelligent adventurer who makes use magical spells and a keen mind to solve problems.",
+			"description": "An intelligent adventurer who uses magical spells and a keen mind to solve problems.",
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
             "stats": {

@@ -8,6 +8,7 @@ var dndLib = require('./dndLib.js');
 exports.handler = function(event,context,callback) {
     var alexa = Alexa.handler(event, context);
     alexa.appId = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
+    alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation
     alexa.resources = languageStrings;
     alexa.registerHandlers(newSessionHandlers, startGameHandlers, charSelectHandlers);
     alexa.execute();
@@ -15,24 +16,42 @@ exports.handler = function(event,context,callback) {
 
 const states = {
     STARTMODE: '_STARTMODE',    // Beginning of game with menu, start, and help prompts
-    CHARSELECT: '_CHARSELECT',  // Prompts user to select a character, and gives info on character
-    FORESTSCENE: '_FORESTSCENE' // The first encounter, where the user is described a situation and asked what to do
+    CHARSELECT: '_CHARSELECT'  // Prompts user to select a character, and gives info on character
+    //FORESTSCENE: '_FORESTSCENE' // The first encounter, where the user is described a situation and asked what to do
 };
 
 // user opens the skill, either for the first time or is returning
 const newSessionHandlers = {
     'NewSession': function () {
-        this.handler.state = states.STARTMODE;
-        this.attributes['speechOutput'] = langEN.WELCOME_MESSAGE;
-        this.attributes['repromptSpeech']  = langEN.WELCOME_REPROMPT;
+        // if the user hasn't opened the application before, or had completed the game
+        if(!this.attributes['character']){
+            this.handler.state = states.STARTMODE;
+            this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
+            this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
+        } else {
+            // if the user is returning to an in-progress game
+            // ask if they want to continue where they left off or start a new game
+            this.attributes["speechOutput"] = "Welcome back! Would you like to continue from where you left off, or start a new game?";
+            this.attributes['repromptSpeech'] = "Say continue to pick up where you left off, or say new to start over. Say exit to quit.";
+        }
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+    },
+
+    'ContinueGameIntent': function () {
+        this.handler.state = this.attributes['gameState'];
     },
     'Unhandled': function () {
         this.attributes['speechOutput'] = langEN.UNHANDLED;
         this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
-    //Required Amazon Intents
+    'AMAZON.YesIntent': function () {
+        this.emit('ContinueGameIntent');
+    },
+    'AMAZON.NoIntent': function () {
+        this.handler.state = states.STARTMODE;
+        this.attributes['speechOutput'] = "Okay, I\'ve reset your progress. Let\'s start again.";
+    },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = langEN.HELP_MESSAGE;
         this.attributes['repromptSpeech'] = langEN.HELP_REPROMPT;
@@ -98,10 +117,6 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         this.attributes['character'] = 'rogue';
         this.attributes['speechOutput'] = dndLib.getClassDescription('rogue') + ' Say yes to confirm, or say wizard or warrior to hear about the other classes. Say more info for detailed stats.';
         this.emit(':ask', this.attributes['speechOutput']);
-        // set a user/session attribute 'selectedChar' = rogue
-        // prompt user to check if they want description
-        // double check to confirm choice
-
     },
 
     // user says warrior
@@ -109,7 +124,6 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         this.attributes['character'] = 'warrior';
         this.attributes['speechOutput'] = dndLib.getClassDescription('warrior') + ' Say yes to confirm, or say wizard or rogue to hear about the other classes. Say more info for detailed stats.';
         this.emit(':ask', this.attributes['speechOutput']);
-        // set a user/session attribute 'selectedChar' = warrior
     },
 
     // user says wizard
@@ -117,7 +131,6 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         this.attributes['character'] = 'wizard';
         this.attributes['speechOutput'] = dndLib.getClassDescription('wizard') + ' Say yes to confirm, or say rogue or warrior to hear about the other classes. Say more info for detailed stats.';
         this.emit(':ask', this.attributes['speechOutput']);
-        // set a user/session attribute 'selectedChar' = wizard
     },
 
     // user wants more information about a character
@@ -148,7 +161,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
     },
 
     'AMAZON.YesIntent': function () {
-        this.handler.state = states.FORESTSCENE;
+        // this.handler.state = states.FORESTSCENE;
         this.attributes['userHealth'] = dndLib.getStat(this.attributes['character'], 'health'); // sets the health of the user
 
         this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins!";
