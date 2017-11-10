@@ -157,7 +157,8 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHARSELECT, {
         spokenInfo += " Would you like to play as the " + this.attributes['character'] + "?";
 
         this.attributes['speechOutput'] = spokenInfo;
-        this.emit(':askWithCard', this.attributes['speechOutput'],cardTitle,cardOutput,imageObject);
+        this.attributes['repromptSpeech'] = "Say yes to select this character, or say another character to hear more about it. Say exit to quit.";
+        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
     },
 
     'AMAZON.YesIntent': function () {
