@@ -1,5 +1,6 @@
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
+var characterClasses = require('./classes');
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -12,28 +13,6 @@ exports.notFoundMessage = function(slotName, userInput) {
     }
     return speechOutput;
 };
-
-// returns the page(s) where a subject can be found
-// in the 5e player's handbook
-// exports.pageFind = function(index, indexName) {
-//     var pageString = "";
-//     if(typeof index.pages === 'string'){
-//         pageString = index.pages
-//     }
-//     else{
-//         if(index.pages.length>1){
-//             pageString += "pages ";
-//             for(var i = 0; i <= index.pages.length-2; i++){
-//                 pageString += index.pages[i] + ", "
-//             }
-//             pageString += "and " + index.pages[index.pages.length-1]
-//         }
-//         else{
-//             pageString = "page " + index.pages
-//         }
-//     }
-//     return indexName + " can be found on " + pageString + ". ";
-// };
 
 // roll dice function
 exports.rollDice = function(quantity,sides) {
@@ -54,4 +33,37 @@ exports.validateAndSetSlot = function(slot) {
 	}else {
 		return null;
 	}
+};
+
+// Character class functions
+// Getters
+exports.getClassList = function() {
+	return characterClasses.classes;
+};
+
+exports.getClassStats = function(className) {
+	return characterClasses.classes[className];
+};
+
+exports.getStat = function(className, stat) {
+	return characterClasses.classes[className].stats[stat];
+};
+
+exports.getClassAbilities = function(className) {
+	return characterClasses.classes[className].abilities;
+};
+
+exports.getClassAbility = function(className, ability) {
+	return characterClasses.classes[className].abilities[ability];
+};
+
+exports.getClassDescription = function (className) {
+	return characterClasses.classes[className].description;
+};
+
+exports.getClassImages = function (className) {
+    return {
+        smallImageUrl : characterClasses.classes[className].imageSmall,
+        largeImageUrl : characterClasses.classes[className].imageLarge
+    }
 };

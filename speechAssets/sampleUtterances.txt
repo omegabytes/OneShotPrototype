@@ -1,3 +1,6 @@
-ThiefIntent thief
-WizardIntent wizard
+ContinueGameIntent continue
+MoreInfoIntent info
+MoreInfoIntent more info
+RogueIntent rogue
 WarriorIntent warrior
+WizardIntent wizard
