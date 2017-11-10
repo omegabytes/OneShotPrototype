@@ -1,6 +1,8 @@
 ContinueGameIntent continue
+FailIntent fail
 MoreInfoIntent info
 MoreInfoIntent more info
+PassIntent pass
 RogueIntent rogue
 WarriorIntent warrior
 WizardIntent wizard

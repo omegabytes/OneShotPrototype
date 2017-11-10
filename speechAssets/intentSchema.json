@@ -1,6 +1,18 @@
 {
 	"intents": [
 		{
+			"intent": "ContinueGameIntent"
+		},
+		{
+			"intent": "FailIntent"
+		},
+		{
+			"intent": "MoreInfoIntent"
+		},
+		{
+			"intent": "PassIntent"
+		},
+		{
 			"intent": "RogueIntent"
 		},
 		{
@@ -8,12 +20,6 @@
 		},
 		{
 			"intent": "WizardIntent"
-		},
-		{
-			"intent": "ContinueGameIntent"
-		},
-		{
-			"intent": "MoreInfoIntent"
 		},
 		{
 			"intent": "Unhandled"
