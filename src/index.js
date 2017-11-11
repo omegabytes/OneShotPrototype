@@ -10,19 +10,19 @@ exports.handler = function(event,context,callback) {
     alexa.appId = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
     alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation
     alexa.resources = languageStrings;
-    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndFailureHandlers, combatEndSuccessHandlers, endGameHandlers, enemySeesUserHandlers, forestSceneHandlers, startGameHandlers, userSeesEnemyHandlers);
+    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers, userSeesEnemyHandlers);
     alexa.execute();
 };
 
-//FIXME: not all of these states will be used. Any state listed here must have a matching handler and include all the required Amazon intents (intermittent bugs otherwise)
+//FIXME: not all of these states will be used. Any state listed here must have a matching handler and include all the required Amazon intents (causes compile-time errors)
 const states = {
     CHAR_SELECT:        '_CHARSELECT',         // Prompts user to select a character, and gives info on character
     COMBAT:             '_COMBAT',             // User enters combat
-    COMBAT_END_FAILURE: '_COMBATENDFAILURE',   // User hp reaches zero
-    COMBAT_END_SUCCESS: '_COMBATENDSUCCESS',   // Orc hp reaches zero
+    COMBAT_END:         '_COMBATEND',          // User exits combat with either a success or failure attribute
     ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
     ENEMY_SEES_USER:    '_ENEMYSEESUSER',      // Messaging and options if user fails perception/stealth checks, user attacks second
     FOREST_SCENE:       '_FORESTSCENE',        // The first encounter, where the user is described a situation and asked what to do
+    // NEW_GAME:           '_NEWGAME',            // no current game in progress
     START_MODE:         '_STARTMODE',          // Beginning of game with menu, start, and help prompts
     USER_SEES_ENEMY:    '_USERSEESENEMY'       // User passes perception/stealth checks, attacks first
 };
@@ -36,7 +36,7 @@ const userActions = [
 const newSessionHandlers = {
     'LaunchRequest': function () {
         // if the user hasn't opened the application before, or had completed the game
-        if(!this.attributes['character']){
+        if(!this.attributes["gameInProgress"]){
             this.handler.state = states.START_MODE;
             this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
             this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
@@ -190,46 +190,21 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
-    'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.NoIntent': function () {
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':tell', this.attributes['speechOutput']);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.RepeatIntent': function () {
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'SessionEndedRequest':function () {
-        this.emit(':tell', langEN.STOP_MESSAGE);
-    },
-    'Unhandled': function () {
-        this.attributes['speechOutput'] = langEN.UNHANDLED;
-        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    }
-});
-
-// User's hp drops to zero, game ends. This may handled in the COMBAT state
-const combatEndFailureHandlers = Alexa.CreateStateHandler(states.COMBAT_END_FAILURE, {
-    'NewSession': function () {
-        this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
+    // User defeats enemy
+    'PassIntent': function () {
+        this.attributes['didUserDefeatEnemy'] = true;
+        this.handler.state = states.COMBAT_END;
+        this.attributes['speechOutput'] = "Transitioning to COMBAT END. You can search the area, or continue your journey. What would you like to do?"; // add intents in combatEndHandlers to handle investigation. Transition back to forestscene, add 'enemyDefeated' session attrib?
+        this.emit(':ask', this.attributes['speechOutput']);
     },
 
+    // User hp hits 0
+    'FailIntent': function () {
+        this.attributes['didUserDefeatEnemy'] = false;
+        this.handler.state = states.COMBAT_END;
+        this.attributes['speechOutput'] = "Transitioning to COMBAT END. Would you like to play again?";
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
     'AMAZON.YesIntent': function () {
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
@@ -265,20 +240,35 @@ const combatEndFailureHandlers = Alexa.CreateStateHandler(states.COMBAT_END_FAIL
 });
 
 // User defeats enemy. This may be handled in the COMBAT state
-const combatEndSuccessHandlers = Alexa.CreateStateHandler(states.COMBAT_END_SUCCESS, {
+const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
     'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
+        this.handler.state = states.ENDGAME;
+        this.attributes['speechOutput'] = "YES: " + this.handler.state + ". Okay let me get a new game started for you..."; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
     'AMAZON.NoIntent': function () {
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
+        this.handler.state = states.ENDGAME;
+        this.attributes["gameInProgress"] = false;
+        this.attributes['speechOutput'] = "NO: " + this.handler.state + ". Okay, thanks for playing!"; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':tell', this.attributes['speechOutput']);
+    },
+
+    // After combat, user opts to skip searching the area and continues on, or user finishes searching the area
+    'ContinueJourney': function () {
+        this.handler.state = states.ENDGAME;
+        this.emitWithState('EndGameIntent');
+    },
+    'SearchTheArea': function () {
+        this.handler.state = states.ENDGAME;
+        this.attributes['speechOutput'] = "SEARCH: " + this.handler.state + ". We would transition back to the forest here, and have the user look around within a conditional check of didUserDefeatEnemy."
+                                                     + " For now, we will simply exit the game, and reset for a new game.";
+        this.emit('EndGameIntent');
     },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
@@ -309,47 +299,19 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+    'EndGameIntent' : function () {
+        this.attributes["gameInProgress"] = false;
+        // this.handler.state = states.START_MODE; //FIXME: what state should this be? Users opening the skill for the first time won't have any state stored. Can it be null?
+        this.handler.state = '';
 
-    'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.NoIntent': function () {
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':tell', this.attributes['speechOutput']);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.RepeatIntent': function () {
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'SessionEndedRequest':function () {
-        this.emit(':tell', langEN.STOP_MESSAGE);
-    },
-    'Unhandled': function () {
-        this.attributes['speechOutput'] = langEN.UNHANDLED;
-        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    }
-});
+        if (this.attributes['didUserDefeatEnemy']){
+            this.attributes['speechOutput'] = 'You won. Goodbye';
+        } else {
+            this.attributes['speechOutput'] = 'You lost. Goodbye.';
+        }
 
-// The user fails either perception or stealth checks prior to combat
-const enemySeesUserHandlers = Alexa.CreateStateHandler(states.ENEMY_SEES_USER, {
-    'NewSession': function () {
-        this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
+        this.emit(':tell',this.attributes['speechOutput']);
     },
-
     'AMAZON.YesIntent': function () {
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
@@ -390,20 +352,22 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
+    // User passes perception check
     'PassIntent': function () {
-        // this.handler.state = states.USER_SEES_ENEMY;
-        this.attributes['speechOutput'] = "Transitioning to USER SEES ENEMY";
+        this.handler.state = states.USER_SEES_ENEMY;
+        this.attributes['speechOutput'] = "Transition to USER SEES ENEMY has not been implemented";
         this.emit(':tell', this.attributes['speechOutput']);
     },
 
+    // User fails perception check
     'FailIntent': function () {
-        // this.handler.state = states.ENEMY_SEES_USER;
-        this.attributes['speechOutput'] = "Transitioning to ENEMY SEES USER";
-        this.emit(':tell', this.attributes['speechOutput']);
+        this.handler.state = states.COMBAT;
+        this.attributes['speechOutput'] = "Transitioning to COMBAT. Say pass to defeat the enemy or fail to lose.";
+        this.emit(':ask', this.attributes['speechOutput']);
     },
 
     'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state + ". Say pass to transition to USER SEES ENEMY or fail to transition to ENEMY SEES USER"; //FIXME: replace with correct messaging
+        this.attributes['speechOutput'] = "YES: " + this.handler.state + ". Say pass to transition to USER SEES ENEMY or fail to transition to COMBAT"; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
