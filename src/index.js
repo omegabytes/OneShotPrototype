@@ -30,7 +30,7 @@ const states = {
 
 //FIXME: these will probably have to be captured by slots in a custom intent, depending on the game state.
 const userActions = [
-  'attack', 'investigate', 'hide', 'run away', 'speak', 'defend', 'use ability'
+  'attack', 'investigate', 'hide', 'flee', 'diplomacy', 'defend', 'use ability'
 ];
 
 // user opens the skill, either for the first time or is returning
@@ -391,44 +391,31 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
+    // User says attack
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+
     // User says investigate
     'InvestigateIntent' : function () {
-        skillCheck('investigate');
+        this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
     },
 
     // User says flee
     'InvestigateIntent' : function () {
-        skillCheck('flee');
+        this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says diplomacy
     'InvestigateIntent' : function () {
-        skillCheck('diplomacy');
+        this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says hide
     'InvestigateIntent' : function () {
-        skillCheck('hide');
-    },
-
-    'skillCheck': function(skill){
-        let DC = scenes.forest.difficulty_classes[skill];
-        let check = dndLib.rolldice(1, 20);
-        let bonus = dndLib.getStat(this.attributes['character'], skill);
-        let total = check + bonus;
-        let result = dndLib.skillCheck(check, bonus, DC);
-        let description = "";
-        if (result) {
-            description = scenes.forest.action_success.invesitgate;
-        } else {
-            description = scenes.forest.action_failure.invesitgate;
-        }
-
-        if (result) {
-            let outcome = 'passed';
-        } else {
-            let outcome = 'failed';
-        }
-
-        this.attributes['speechOutput'] = "You " + outcome + " your " + skill + " check with a" + total + description;
+        this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_not_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
 
@@ -482,6 +469,34 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
 const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
+    },
+
+    // User says attack
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+
+    // User says investigate
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'enemy_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+
+    // User says flee
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+    // User says diplomacy
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+    // User says hide
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
     },
 
     'AMAZON.YesIntent': function () {
