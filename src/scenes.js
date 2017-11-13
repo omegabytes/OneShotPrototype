@@ -5,6 +5,12 @@ module.exports = {
 
 			"prompt": "What do you do?"
 			"options": {},
+			"difficulty_classes": {
+				"investigate": 15;
+				"flee": 12;
+				"diplomacy": 18;
+				"hide": 15;
+			}
 			"card": {
 			},
 			"action_success": {

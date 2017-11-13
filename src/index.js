@@ -4,6 +4,7 @@ var Alexa = require('alexa-sdk');
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
+var scenes = require('./scenes');
 
 exports.handler = function(event,context,callback) {
     var alexa = Alexa.handler(event, context);
@@ -150,7 +151,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
 
         this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins!";
 
-        this.attributes['speechOutput'] += " You are in the forest scene. Say yes to continue or no to exit."; //FIXME: development purposes only
+        this.attributes['speechOutput'] += scenes.forest.description; //FIXME: development purposes only
 
         //FIXME: add description for the next scene
         this.emit(':ask', this.attributes['speechOutput']);
@@ -388,6 +389,47 @@ const enemySeesUserHandlers = Alexa.CreateStateHandler(states.ENEMY_SEES_USER, {
 const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
+    },
+
+    // User says investigate
+    'InvestigateIntent' : function () {
+        skillCheck('investigate');
+    },
+
+    // User says flee
+    'InvestigateIntent' : function () {
+        skillCheck('flee');
+    },
+    // User says diplomacy
+    'InvestigateIntent' : function () {
+        skillCheck('diplomacy');
+    },
+    // User says hide
+    'InvestigateIntent' : function () {
+        skillCheck('hide');
+    },
+
+    'skillCheck': function(skill){
+        let DC = scenes.forest.difficulty_classes[skill];
+        let check = dndLib.rolldice(1, 20);
+        let bonus = dndLib.getStat(this.attributes['character'], skill);
+        let total = check + bonus;
+        let result = dndLib.skillCheck(check, bonus, DC);
+        let description = "";
+        if (result) {
+            description = scenes.forest.action_success.invesitgate;
+        } else {
+            description = scenes.forest.action_failure.invesitgate;
+        }
+
+        if (result) {
+            let outcome = 'passed';
+        } else {
+            let outcome = 'failed';
+        }
+
+        this.attributes['speechOutput'] = "You " + outcome + " your " + skill + " check with a" + total + description;
+        this.emit(':ask', this.attributes['speechOutput']);
     },
 
     'PassIntent': function () {
