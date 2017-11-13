@@ -14,28 +14,6 @@ exports.notFoundMessage = function(slotName, userInput) {
     return speechOutput;
 };
 
-// returns the page(s) where a subject can be found
-// in the 5e player's handbook
-// exports.pageFind = function(index, indexName) {
-//     var pageString = "";
-//     if(typeof index.pages === 'string'){
-//         pageString = index.pages
-//     }
-//     else{
-//         if(index.pages.length>1){
-//             pageString += "pages ";
-//             for(var i = 0; i <= index.pages.length-2; i++){
-//                 pageString += index.pages[i] + ", "
-//             }
-//             pageString += "and " + index.pages[index.pages.length-1]
-//         }
-//         else{
-//             pageString = "page " + index.pages
-//         }
-//     }
-//     return indexName + " can be found on " + pageString + ". ";
-// };
-
 // roll dice function
 exports.rollDice = function(quantity,sides) {
     var facevalue;
@@ -47,6 +25,18 @@ exports.rollDice = function(quantity,sides) {
     }
     return output;
 };
+
+// Skill check function
+exports.skillCheck = function(check, bonus, DC) {
+	check += bonus;
+	let result = false;
+
+    if (check >= DC) {
+        result = true;
+    }
+
+    return result;
+}
 
 // validates the slot, matches the value, and sets it
 exports.validateAndSetSlot = function(slot) {
@@ -69,7 +59,7 @@ exports.getClassStats = function(className) {
 
 exports.getStat = function(className, stat) {
 	return characterClasses.classes[className].stats[stat];
-}
+};
 
 exports.getClassAbilities = function(className) {
 	return characterClasses.classes[className].abilities;
@@ -77,4 +67,46 @@ exports.getClassAbilities = function(className) {
 
 exports.getClassAbility = function(className, ability) {
 	return characterClasses.classes[className].abilities[ability];
-}
+};
+
+exports.getClassDescription = function (className) {
+	return characterClasses.classes[className].description;
+};
+
+exports.getClassImages = function (className) {
+    return {
+        smallImageUrl : characterClasses.classes[className].imageSmall,
+        largeImageUrl : characterClasses.classes[className].imageLarge
+    }
+};
+
+exports.skillCheck = function(skill, scene, state){
+    let DC = scenes[scene].difficulty_classes[skill];
+    let check = dndLib.rolldice(1, 20);
+    let bonus = dndLib.getStat(this.attributes['character'], skill);
+    let total = check + bonus;
+    let result = dndLib.skillCheck(check, bonus, DC);
+    let description = "";
+    let output = "";
+
+    if (result) {
+        description = scenes[scene][state].action_success.invesitgate;
+    } else {
+        description = scenes[scene][state].action_failure.invesitgate;
+    }
+
+    if (description != "") {
+       if (result) {
+            let outcome = 'passed';
+        } else {
+            let outcome = 'failed';
+        }
+
+        output = "You " + outcome + " your " + skill + " check with a" + total + description;
+    } else {
+        // If no description, action is useless
+        output = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
+    }
+
+    return output;
+};

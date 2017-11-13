@@ -2,6 +2,8 @@ module.exports = {
 	"classes": {
 		"warrior": {
 			"description": "A mighty adventurer, favoring hand to hand combat and a direct approach.",
+			"imageSmall": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.dwarfbadday.jpg",
+			"imageLarge": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.dwarfbadday.jpg",
 			"stats": {
 				"health": 25,
 				"attackBonus": 7,
@@ -17,8 +19,10 @@ module.exports = {
 			}
 		},
 		"wizard": {
-			"description": "An intelligent adventurer who makes use magical spells and a keen mind to solve problems.",
-			"stats": {
+			"description": "An intelligent adventurer who uses magical spells and a keen mind to solve problems.",
+            "imageSmall": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
+            "imageLarge": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
+            "stats": {
 				"health": 15,
 				"attackBonus": 5,
 				"damageDieSides": 10,
@@ -36,7 +40,9 @@ module.exports = {
 		},
 		"rogue": {
 			"description": "A skilled adventurer, specializing in subterfuge and misdirection.",
-			"stats": {
+            "imageSmall": "https://s3.amazonaws.com/oneshotimages/WotC-Draconomicon-elvenarcher.jpg",
+            "imageLarge": "https://s3.amazonaws.com/oneshotimages/WotC-Draconomicon-elvenarcher.jpg",
+            "stats": {
 				"health": 20,
 				"attackBonus": 5,
 				"damageDieSides": 8,
