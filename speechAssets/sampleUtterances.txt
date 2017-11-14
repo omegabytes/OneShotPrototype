@@ -6,3 +6,8 @@ PassIntent pass
 RogueIntent rogue
 WarriorIntent warrior
 WizardIntent wizard
+AttackIntent attack
+InvestigateIntent investigate
+DiplomacyIntent diplomacy
+FleeIntent flee
+HideIntent hide

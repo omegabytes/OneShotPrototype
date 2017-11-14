@@ -392,7 +392,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     },
 
     // User says attack
-    'InvestigateIntent' : function () {
+    'AttackIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_not_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
@@ -404,17 +404,17 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     },
 
     // User says flee
-    'InvestigateIntent' : function () {
+    'FleeIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_not_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says diplomacy
-    'InvestigateIntent' : function () {
+    'DiplomacyIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_not_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says hide
-    'InvestigateIntent' : function () {
+    'HideIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_not_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
@@ -472,7 +472,7 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     },
 
     // User says attack
-    'InvestigateIntent' : function () {
+    'AttackIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
@@ -484,17 +484,17 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     },
 
     // User says flee
-    'InvestigateIntent' : function () {
+    'FleeIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says diplomacy
-    'InvestigateIntent' : function () {
+    'DiplomacyIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says hide
-    'InvestigateIntent' : function () {
+    'HideIntent' : function () {
         this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_seen');
         this.emit(':ask', this.attributes['speechOutput']);
     },

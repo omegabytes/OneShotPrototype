@@ -41,6 +41,21 @@
 		},
 		{
 			"intent": "AMAZON.CancelIntent"
+		},
+		{
+			"intent": "AttackIntent"
+		},
+		{
+			"intent": "InvestigateIntent"
+		},
+		{
+			"intent": "FleeIntent"
+		},
+		{
+			"intent": "HideIntent"
+		},
+		{
+			"intent": "DiplomacyIntent"
 		}
 	]
 }
