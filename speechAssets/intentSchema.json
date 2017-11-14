@@ -1,49 +1,61 @@
 {
-  "intents": [
-    {
-      "intent": "ContinueJourney"
-    },
-    {
-      "intent": "FailIntent"
-    },
-    {
-      "intent": "MoreInfoIntent"
-    },
-    {
-      "intent": "PassIntent"
-    },
-    {
-      "intent": "RogueIntent"
-    },
-    {
-      "intent": "SearchTheArea"
-    },
-    {
-      "intent": "WarriorIntent"
-    },
-    {
-      "intent": "WizardIntent"
-    },
-    {
-      "intent": "Unhandled"
-    },
-    {
-      "intent": "AMAZON.YesIntent"
-    },
-    {
-      "intent": "AMAZON.NoIntent"
-    },
-    {
-      "intent": "AMAZON.RepeatIntent"
-    },
-    {
-      "intent": "AMAZON.HelpIntent"
-    },
-    {
-      "intent": "AMAZON.StopIntent"
-    },
-    {
-      "intent": "AMAZON.CancelIntent"
-    }
-  ]
+	"intents": [
+		{
+			"intent": "ContinueGameIntent"
+		},
+		{
+			"intent": "FailIntent"
+		},
+		{
+			"intent": "MoreInfoIntent"
+		},
+		{
+			"intent": "PassIntent"
+		},
+		{
+			"intent": "RogueIntent"
+		},
+		{
+			"intent": "WarriorIntent"
+		},
+		{
+			"intent": "WizardIntent"
+		},
+		{
+			"intent": "Unhandled"
+		},
+		{
+			"intent": "AMAZON.YesIntent"
+		},
+		{
+			"intent": "AMAZON.NoIntent"
+		},
+		{
+			"intent": "AMAZON.RepeatIntent"
+		},
+		{
+			"intent": "AMAZON.HelpIntent"
+		},
+		{
+			"intent": "AMAZON.StopIntent"
+		},
+		{
+			"intent": "AMAZON.CancelIntent"
+		},
+		{
+			"intent": "AttackIntent"
+		},
+		{
+			"intent": "InvestigateIntent"
+		},
+		{
+			"intent": "FleeIntent"
+		},
+		{
+			"intent": "HideIntent"
+		},
+		{
+			"intent": "DiplomacyIntent"
+		}
+	]
 }
