@@ -38,6 +38,12 @@ const newSessionHandlers = {
         // if the user hasn't opened the application before, or had completed the game
         if(!this.attributes["gameInProgress"]){
             this.handler.state = states.START_MODE;
+            // game initialization
+            // FIXME: encapsulate into function
+            this.attributes['userDidSeeEnemy'] = false;
+            this.attributes['userDidPassPerceptionCheck'] = false;
+            this.attributes['userDidPassPerceptionCheck'] = false;
+
             this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
             this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
         } else {
