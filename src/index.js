@@ -190,6 +190,11 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
+    // Combat entry point
+    'CombatEntry' : function () {
+
+    },
+
     // User defeats enemy
     'PassIntent': function () {
         this.attributes['didUserDefeatEnemy'] = true;
@@ -205,6 +210,13 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.attributes['speechOutput'] = "Transitioning to COMBAT END. Would you like to play again?";
         this.emit(':ask', this.attributes['speechOutput']);
     },
+
+    // Handles user actions
+    'UserAction' : function () {
+        // scenes.this_scene.
+        var requestedAction = this.event.request.intent.slots.Action;
+    },
+
     'AMAZON.YesIntent': function () {
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
@@ -310,7 +322,7 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
             this.attributes['speechOutput'] = 'You lost. Goodbye.';
         }
 
-        this.emit(':tell',this.attributes['speechOutput']);
+        this.emit('NewSession');
     },
     'AMAZON.YesIntent': function () {
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
