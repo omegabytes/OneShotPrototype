@@ -27,16 +27,16 @@ exports.rollDice = function(quantity,sides) {
 };
 
 // Skill check function
-exports.skillCheck = function(check, bonus, DC) {
-	check += bonus;
-	let result = false;
-
-    if (check >= DC) {
-        result = true;
-    }
-
-    return result;
-}
+// exports.skillCheck = function(check, bonus, DC) {
+// 	check += bonus;
+// 	let result = false;
+//
+//     if (check >= DC) {
+//         result = true;
+//     }
+//
+//     return result;
+// };
 
 // validates the slot, matches the value, and sets it
 exports.validateAndSetSlot = function(slot) {
