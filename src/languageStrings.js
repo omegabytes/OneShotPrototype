@@ -1,5 +1,6 @@
-var items           = require('./items');
-var spells          = require('./spells');
+var items  = require('./items');
+var spells = require('./spells');
+var scenes = require('./scenes');
 //todo: add character, enemy, scene inits
 
 module.exports = {
@@ -11,6 +12,7 @@ module.exports = {
             "SPELLS":                                       spells.SPELLS,
             "SPELL_ATTRIBUTES" :                            spells.SPELL_ATTRIBUTES,
             "SLOT_LEVEL" :                                  spells.SLOT_LEVEL,
+            "USER_ACTIONS":                                 scenes.scenes,
             //output strings
             "DISPLAY_CARD_TITLE":                           "%s  - Info for %s.",
             "HELP_MESSAGE":                                 "help message placeholder text",

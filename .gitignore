@@ -9,3 +9,4 @@ delzip.py
 src/package-lock.json
 src/package.json
 node_modules/
+src/node_modules/

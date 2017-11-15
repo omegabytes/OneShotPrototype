@@ -1,16 +1,37 @@
 {
 	"intents": [
 		{
+			"intent": "ContinueGameIntent"
+		},
+		{
+			"intent": "ContinueJourney"
+		},
+		{
+			"intent": "FailIntent"
+		},
+		{
+			"intent": "MoreInfoIntent"
+		},
+		{
+			"intent": "PassIntent"
+		},
+		{
 			"intent": "RogueIntent"
+		},
+		{
+			"slots": [
+				{
+					"name": "Action",
+					"type": "USER_ACTIONS"
+				}
+			],
+			"intent": "UserActionIntent"
 		},
 		{
 			"intent": "WarriorIntent"
 		},
 		{
 			"intent": "WizardIntent"
-		},
-		{
-			"intent": "MoreInfoIntent"
 		},
 		{
 			"intent": "Unhandled"

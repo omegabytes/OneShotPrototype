@@ -26,6 +26,18 @@ exports.rollDice = function(quantity,sides) {
     return output;
 };
 
+// Skill check function
+// exports.skillCheck = function(check, bonus, DC) {
+// 	check += bonus;
+// 	let result = false;
+//
+//     if (check >= DC) {
+//         result = true;
+//     }
+//
+//     return result;
+// };
+
 // validates the slot, matches the value, and sets it
 exports.validateAndSetSlot = function(slot) {
 	if (slot && slot.value) {
@@ -66,4 +78,35 @@ exports.getClassImages = function (className) {
         smallImageUrl : characterClasses.classes[className].imageSmall,
         largeImageUrl : characterClasses.classes[className].imageLarge
     }
+};
+
+exports.skillCheck = function(skill, scene, state){
+    let DC = scenes[scene].difficulty_classes[skill];
+    let check = dndLib.rolldice(1, 20);
+    let bonus = dndLib.getStat(this.attributes['character'], skill);
+    let total = check + bonus;
+    let result = dndLib.skillCheck(check, bonus, DC);
+    let description = "";
+    let output = "";
+
+    if (result) {
+        description = scenes[scene][state].action_success.invesitgate;
+    } else {
+        description = scenes[scene][state].action_failure.invesitgate;
+    }
+
+    if (description != "") {
+       if (result) {
+            let outcome = 'passed';
+        } else {
+            let outcome = 'failed';
+        }
+
+        output = "You " + outcome + " your " + skill + " check with a" + total + description;
+    } else {
+        // If no description, action is useless
+        output = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
+    }
+
+    return output;
 };

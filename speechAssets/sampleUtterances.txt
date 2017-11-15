@@ -1,5 +1,8 @@
-RogueIntent rogue
-WizardIntent wizard
-WarriorIntent warrior
+ContinueJourney continue
 MoreInfoIntent info
 MoreInfoIntent more info
+PassIntent pass
+RogueIntent rogue
+UserActionIntent {Action}
+WarriorIntent warrior
+WizardIntent wizard
