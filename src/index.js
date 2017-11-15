@@ -28,11 +28,6 @@ const states = {
     USER_SEES_ENEMY:    '_USERSEESENEMY'       // User passes perception/stealth checks, attacks first
 };
 
-//FIXME: these will probably have to be captured by slots in a custom intent, depending on the game state.
-const userActions = [
-  'attack', 'investigate', 'hide', 'flee', 'diplomacy', 'defend', 'use ability'
-];
-
 // user opens the skill, either for the first time or is returning
 const newSessionHandlers = {
     'LaunchRequest': function () {
@@ -198,9 +193,9 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     },
 
     // Combat entry point
-    'CombatEntry' : function () {
-
-    },
+    // 'CombatEntry' : function () {
+    //
+    // },
 
     // User defeats enemy
     'PassIntent': function () {
@@ -219,9 +214,10 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     },
 
     // Handles user actions
-    'UserAction' : function () {
-        // scenes.this_scene.
-        var requestedAction = this.event.request.intent.slots.Action;
+    'UserActionIntent' : function () {
+        var actionRequestedByUser = this.event.request.intent.slots.Action; // get the action from the user
+        //FIXME: add handling for combat_scene
+
     },
 
     'AMAZON.YesIntent': function () {
@@ -370,6 +366,31 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
 const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
+    },
+
+    // Handles all user actions
+    // get the action from scenes conditionally based on user request
+'UserActionIntent': function () {
+    var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
+    var action;
+    var roll_success = true; //FIXME: temporary variable to represent roll of dice
+
+        if (this.attributes["userDidSeeEnemy"]) {
+            if (roll_success) {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["enemy_seen"]["action_success"][actionRequestedByUser]; // check the requested action against the actions in scen
+            } else {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["enemy_seen"]["action_failure"][actionRequestedByUser];
+            }
+        } else {
+            if (roll_success) {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["enemy_not_seen"]["action_success"][actionRequestedByUser];
+            } else {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["enemy_not_seen"]["action_failure"][actionRequestedByUser];
+            }
+        }
+
+        this.attributes["speechOutput"] = action;
+        this.emit(this.attributes["speechOutput"]);
     },
 
     // User says attack

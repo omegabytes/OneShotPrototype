@@ -16,6 +16,15 @@
 			"intent": "RogueIntent"
 		},
 		{
+			"slots": [
+				{
+					"name": "Action",
+					"type": "USER_ACTIONS"
+				}
+			],
+			"intent": "UserActionIntent"
+		},
+		{
 			"intent": "WarriorIntent"
 		},
 		{
