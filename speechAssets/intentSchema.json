@@ -21,6 +21,15 @@
 		{
 			"slots": [
 				{
+				"name": "Class",
+				"type": "LIST_OF_CLASSES"
+				}
+			],
+			"intent": "UserClassIntent"
+		},
+		{
+			"slots": [
+				{
 					"name": "Action",
 					"type": "USER_ACTIONS"
 				}

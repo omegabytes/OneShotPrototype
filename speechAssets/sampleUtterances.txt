@@ -2,7 +2,5 @@ ContinueJourney continue
 MoreInfoIntent info
 MoreInfoIntent more info
 PassIntent pass
-RogueIntent rogue
 UserActionIntent {Action}
-WarriorIntent warrior
-WizardIntent wizard
+UserClassIntent {Class}
