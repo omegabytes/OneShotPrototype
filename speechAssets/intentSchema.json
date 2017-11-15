@@ -4,6 +4,9 @@
 			"intent": "ContinueGameIntent"
 		},
 		{
+			"intent": "ContinueJourney"
+		},
+		{
 			"intent": "FailIntent"
 		},
 		{
@@ -14,6 +17,15 @@
 		},
 		{
 			"intent": "RogueIntent"
+		},
+		{
+			"slots": [
+				{
+					"name": "Action",
+					"type": "USER_ACTIONS"
+				}
+			],
+			"intent": "UserActionIntent"
 		},
 		{
 			"intent": "WarriorIntent"
@@ -41,21 +53,6 @@
 		},
 		{
 			"intent": "AMAZON.CancelIntent"
-		},
-		{
-			"intent": "AttackIntent"
-		},
-		{
-			"intent": "InvestigateIntent"
-		},
-		{
-			"intent": "FleeIntent"
-		},
-		{
-			"intent": "HideIntent"
-		},
-		{
-			"intent": "DiplomacyIntent"
 		}
 	]
 }

@@ -1,0 +1,7 @@
+attack
+defend
+diplomacy
+flee
+hide
+investigate
+use ability

@@ -1,13 +1,8 @@
-AttackIntent attack
 ContinueJourney continue
-DiplomacyIntent diplomacy
-FailIntent fail
-FleeIntent flee
-HideIntent hide
-InvestigateIntent investigate
 MoreInfoIntent info
 MoreInfoIntent more info
 PassIntent pass
 RogueIntent rogue
+UserActionIntent {Action}
 WarriorIntent warrior
 WizardIntent wizard
