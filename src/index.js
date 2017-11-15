@@ -97,28 +97,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
-
-    // // user says rogue
-    // 'RogueIntent' : function () {
-    //     this.attributes['character'] = 'rogue';
-    //     this.attributes['speechOutput'] = dndLib.getClassDescription('rogue') + ' Say yes to confirm, or say wizard or warrior to hear about the other classes. Say more info for detailed stats.';
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-
-    // // user says warrior
-    // 'WarriorIntent' : function () {
-    //     this.attributes['character'] = 'warrior';
-    //     this.attributes['speechOutput'] = dndLib.getClassDescription('warrior') + ' Say yes to confirm, or say wizard or rogue to hear about the other classes. Say more info for detailed stats.';
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-
-    // // user says wizard
-    // 'WizardIntent' : function () {
-    //     this.attributes['character'] = 'wizard';
-    //     this.attributes['speechOutput'] = dndLib.getClassDescription('wizard') + ' Say yes to confirm, or say rogue or warrior to hear about the other classes. Say more info for detailed stats.';
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-
+    
     // Handles class selection
     'UserClassIntent' : function () {
         this.attributes['character'] = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
