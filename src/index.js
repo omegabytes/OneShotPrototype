@@ -283,12 +283,13 @@ const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
         this.handler.state = states.ENDGAME;
         this.emitWithState('EndGameIntent');
     },
-    'SearchTheArea': function () {
-        this.handler.state = states.ENDGAME;
-        this.attributes['speechOutput'] = "SEARCH: " + this.handler.state + ". We would transition back to the forest here, and have the user look around within a conditional check of didUserDefeatEnemy."
-                                                     + " For now, we will simply exit the game, and reset for a new game.";
-        this.emit('EndGameIntent');
-    },
+    //FIXME: refactor this into a UserActionIntent
+    // 'SearchTheArea': function () {
+    //     this.handler.state = states.ENDGAME;
+    //     this.attributes['speechOutput'] = "SEARCH: " + this.handler.state + ". We would transition back to the forest here, and have the user look around within a conditional check of didUserDefeatEnemy."
+    //                                                  + " For now, we will simply exit the game, and reset for a new game.";
+    //     this.emit('EndGameIntent');
+    // },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging

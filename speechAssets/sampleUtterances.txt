@@ -9,9 +9,5 @@ MoreInfoIntent info
 MoreInfoIntent more info
 PassIntent pass
 RogueIntent rogue
-SearchTheArea search
-SearchTheArea investigate
-SearchTheArea investigate area
-SearchTheArea look around
 WarriorIntent warrior
 WizardIntent wizard
