@@ -5,10 +5,11 @@ var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
+const APPID = require('./appID');
 
 exports.handler = function(event,context,callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.appId = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
+    alexa.appId = APPID;
     alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation
     alexa.resources = languageStrings;
     alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers, userSeesEnemyHandlers);
@@ -96,25 +97,13 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+    
+    // Handles class selection
+    'UserClassIntent' : function () {
+        this.attributes['character'] = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
 
-    // user says rogue
-    'RogueIntent' : function () {
-        this.attributes['character'] = 'rogue';
-        this.attributes['speechOutput'] = dndLib.getClassDescription('rogue') + ' Say yes to confirm, or say wizard or warrior to hear about the other classes. Say more info for detailed stats.';
-        this.emit(':ask', this.attributes['speechOutput']);
-    },
+        this.attributes['speechOutput'] = dndLib.getClassDescription(this.attributes['character']) + ' Say yes to confirm, or say warrior, wizard, or rogue to hear about each class. Say more info for detailed stats.';
 
-    // user says warrior
-    'WarriorIntent' : function () {
-        this.attributes['character'] = 'warrior';
-        this.attributes['speechOutput'] = dndLib.getClassDescription('warrior') + ' Say yes to confirm, or say wizard or rogue to hear about the other classes. Say more info for detailed stats.';
-        this.emit(':ask', this.attributes['speechOutput']);
-    },
-
-    // user says wizard
-    'WizardIntent' : function () {
-        this.attributes['character'] = 'wizard';
-        this.attributes['speechOutput'] = dndLib.getClassDescription('wizard') + ' Say yes to confirm, or say rogue or warrior to hear about the other classes. Say more info for detailed stats.';
         this.emit(':ask', this.attributes['speechOutput']);
     },
 
