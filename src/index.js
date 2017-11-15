@@ -119,7 +119,7 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     // },
 
     // Handles class selection
-    'UserActionIntent' : function () {
+    'UserClassIntent' : function () {
         this.attributes['character'] = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
 
         this.attributes['speechOutput'] = dndLib.getClassDescription(this.attributes['character']) + ' Say yes to confirm, or say warrior, wizard, or rogue to hear about each class. Say more info for detailed stats.';
