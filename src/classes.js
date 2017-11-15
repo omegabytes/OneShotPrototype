@@ -5,6 +5,7 @@ module.exports = {
 			"imageSmall": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.dwarfbadday.jpg",
 			"imageLarge": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.dwarfbadday.jpg",
 			"stats": {
+				"defense": 15,
 				"health": 25,
 				"attackBonus": 7,
 				"damageDieSides": 12,
@@ -23,6 +24,7 @@ module.exports = {
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/BookVileDarkness.wizard.jpg",
             "stats": {
+            	"defense": 10,
 				"health": 15,
 				"attackBonus": 5,
 				"damageDieSides": 10,
@@ -43,6 +45,7 @@ module.exports = {
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/WotC-Draconomicon-elvenarcher.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/WotC-Draconomicon-elvenarcher.jpg",
             "stats": {
+            	"defense": 12,
 				"health": 20,
 				"attackBonus": 5,
 				"damageDieSides": 8,

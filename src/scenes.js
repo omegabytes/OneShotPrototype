@@ -14,6 +14,9 @@ module.exports = {
 			},
 			"card": {
 			},
+			"enemies": {
+				"orc": 4
+			},
 			"enemy_not_seen": {
 				"action_success": {
 					"attack": "",

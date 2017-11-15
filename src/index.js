@@ -202,6 +202,33 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
     },
 
+    // User says attack
+    'AttackIntent': function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+
+    // User says investigate
+    'InvestigateIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+
+    // User says flee
+    'FleeIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+    // User says diplomacy
+    'DiplomacyIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+    },
+    // User says hide
+    'HideIntent' : function () {
+        this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_not_seen');
+        this.emit(':ask', this.attributes['speechOutput']);
+
     // User defeats enemy
     'PassIntent': function () {
         this.attributes['didUserDefeatEnemy'] = true;
@@ -263,6 +290,8 @@ const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+
+    ''
 
     'AMAZON.YesIntent': function () {
         this.handler.state = states.ENDGAME;
@@ -555,5 +584,3 @@ const userSeesEnemyHandlers = Alexa.CreateStateHandler(states.USER_SEES_ENEMY, {
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     }
 });
-
-
