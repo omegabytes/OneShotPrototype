@@ -80,33 +80,57 @@ exports.getClassImages = function (className) {
     }
 };
 
-exports.skillCheck = function(skill, scene, state){
-    let DC = scenes[scene].difficulty_classes[skill];
-    let check = dndLib.rolldice(1, 20);
-    let bonus = dndLib.getStat(this.attributes['character'], skill);
-    let total = check + bonus;
-    let result = dndLib.skillCheck(check, bonus, DC);
-    let description = "";
-    let output = "";
+/**
+* Checks d20 roll with bonus vs. DC.
+* @param DC difficulty class of the check.
+* @param bonus bonus to be added to die roll.
+* @return an object containing the die roll + bonus and pass or fail boolean.
+*/
 
-    if (result) {
-        description = scenes[scene][state].action_success.invesitgate;
-    } else {
-        description = scenes[scene][state].action_failure.invesitgate;
+exports.skillCheck = function(DC, bonus){
+    var result = {
+        "roll": 0,
+        "pass": false
+    };
+    var dieRoll = dndLib.rollDice(1, 20);
+    var total = dieRoll + bonus;
+    if (total <= 0) {
+        total = 1;
     }
 
-    if (description != "") {
-       if (result) {
-            let outcome = 'passed';
-        } else {
-            let outcome = 'failed';
-        }
+    result.roll = total;
 
-        output = "You " + outcome + " your " + skill + " check with a" + total + description;
+    if (total >= DC) {
+        result.pass = true;
+    }
+
+    return result;
+};
+
+/**
+* Constructs a response object based on scene, state, skill, and skill check result.
+* @param scene current scene.
+* @param state custom state within a scene such as enemy_seen.
+* @param skill the skill that was checked.
+* @param roll skill check roll.
+* @param pass boolean, result of skill check.
+* @return an object containing the die roll + bonus and pass or fail boolean.
+*/
+exports.responseBuilder = function (scene, state, skill, roll, pass) {
+    var output = {
+        "description": "",
+        "state_change": ""
+    };
+
+    var successFail = pass ? "pass" : "fail";
+    resultObject = scenes[scene][state][successFail][skill];
+
+    if (resultObject.description != "") {
+        output.description = "You " + successFail "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
     } else {
         // If no description, action is useless
-        output = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
+        output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
     }
 
-    return output;
+    return output
 };
