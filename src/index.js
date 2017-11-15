@@ -204,30 +204,31 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
     // User says attack
     'AttackIntent': function () {
-        this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'enemy_not_seen');
+        this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'combat');
         this.emit(':ask', this.attributes['speechOutput']);
     },
 
     // User says investigate
     'InvestigateIntent' : function () {
-        this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'enemy_not_seen');
+        this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'combat');
         this.emit(':ask', this.attributes['speechOutput']);
     },
 
     // User says flee
     'FleeIntent' : function () {
-        this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'enemy_not_seen');
+        this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'combat');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says diplomacy
     'DiplomacyIntent' : function () {
-        this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'enemy_not_seen');
+        this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'combat');
         this.emit(':ask', this.attributes['speechOutput']);
     },
     // User says hide
     'HideIntent' : function () {
-        this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'enemy_not_seen');
+        this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'combat');
         this.emit(':ask', this.attributes['speechOutput']);
+    },
 
     // User defeats enemy
     'PassIntent': function () {
