@@ -5,10 +5,11 @@ var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
+const APPID = require('./appID');
 
 exports.handler = function(event,context,callback) {
     var alexa = Alexa.handler(event, context);
-    alexa.appId = "amzn1.ask.skill.cc5fc00c-2a42-4e91-afa9-f0a640147e25";
+    alexa.appId = APPID;
     alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation
     alexa.resources = languageStrings;
     alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers, userSeesEnemyHandlers);
@@ -35,10 +36,11 @@ const newSessionHandlers = {
         if(!this.attributes["gameInProgress"]){
             this.handler.state = states.START_MODE;
             // game initialization
+            this.attributes['character'] = '';
             // FIXME: encapsulate into function
+            this.attributes['didUserDefeatEnemy'] = false;
             this.attributes['userDidSeeEnemy'] = false;
-            this.attributes['userDidPassPerceptionCheck'] = false;
-            this.attributes['userDidPassPerceptionCheck'] = false;
+            this.attributes['userHealth'] = '';
 
             this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
             this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
@@ -189,39 +191,6 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
-
-    // Combat entry point
-    // 'CombatEntry' : function () {
-    //
-    // },
-
-    // User says attack
-    // 'AttackIntent': function () {
-    //     this.attributes['speechOutput'] = dndLib.skillCheck('attack', 'forest', 'combat');
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-    //
-    // // User says investigate
-    // 'InvestigateIntent' : function () {
-    //     this.attributes['speechOutput'] = dndLib.skillCheck('investigate', 'forest', 'combat');
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-    //
-    // // User says flee
-    // 'FleeIntent' : function () {
-    //     this.attributes['speechOutput'] = dndLib.skillCheck('flee', 'forest', 'combat');
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-    // // User says diplomacy
-    // 'DiplomacyIntent' : function () {
-    //     this.attributes['speechOutput'] = dndLib.skillCheck('diplomacy', 'forest', 'combat');
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
-    // // User says hide
-    // 'HideIntent' : function () {
-    //     this.attributes['speechOutput'] = dndLib.skillCheck('hide', 'forest', 'combat');
-    //     this.emit(':ask', this.attributes['speechOutput']);
-    // },
 
     // User defeats enemy
     'PassIntent': function () { //FIXME: remove temporary state-linking intents
