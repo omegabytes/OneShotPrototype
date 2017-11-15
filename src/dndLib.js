@@ -81,13 +81,13 @@ exports.getClassImages = function (className) {
 };
 
 exports.skillCheck = function(skill, scene, state){
-    let DC = scenes[scene].difficulty_classes[skill];
-    let check = dndLib.rolldice(1, 20);
-    let bonus = dndLib.getStat(this.attributes['character'], skill);
-    let total = check + bonus;
-    let result = dndLib.skillCheck(check, bonus, DC);
-    let description = "";
-    let output = "";
+    var DC = scenes[scene].difficulty_classes[skill];
+    var check = dndLib.rolldice(1, 20);
+    var bonus = dndLib.getStat(this.attributes['character'], skill);
+    var total = check + bonus;
+    var result = dndLib.skillCheck(check, bonus, DC);
+    var description = "";
+    var output = "";
 
     if (result) {
         description = scenes[scene][state].action_success.invesitgate;
@@ -97,9 +97,9 @@ exports.skillCheck = function(skill, scene, state){
 
     if (description != "") {
        if (result) {
-            let outcome = 'passed';
+            var outcome = 'passed';
         } else {
-            let outcome = 'failed';
+            var outcome = 'failed';
         }
 
         output = "You " + outcome + " your " + skill + " check with a" + total + description;

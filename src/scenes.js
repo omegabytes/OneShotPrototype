@@ -20,14 +20,20 @@ module.exports = {
             "enemy_not_seen": {
                 "action_success": {
                     "attack": "",
-                    "investigate": "The camp fire has been recently burning, and the forest is eerily silent. You scan the edge of the trees and spot a handful of vicious looking orcs brandishing weapons as they attempt to conceal themselves behind some large shrubs.",
+                    "investigate": {
+                        "description": "The camp fire has been recently burning, and the forest is eerily silent. You scan the edge of the trees and spot a handful of vicious looking orcs brandishing weapons as they attempt to conceal themselves behind some large shrubs.",
+                        "state_change": "enemy_seen"
+                    },
                     "flee": "You run, from what you do not know. You escape back to the safety of the road. You carry on with your dreary life, vowing never to take another risk again, but always wondering what adventures awaited you in the forest.",
                     "diplomacy": "",
                     "hide": "You vanish into the shadows of the trees easily."
                 },
                 "action_failure": {
                     "attack": "",
-                    "investigate": "The camp fire has been recently burning, but there doesn't seem to be anyone around. The clearing seems safe to explore, so you step out of the bushes and begin searching for anything of interest. Just then, several huge orcs bellow as they leap out of the brush and attack you.",
+                    "investigate": {
+                        "description": "The camp fire has been recently burning, but there doesn't seem to be anyone around. The clearing seems safe to explore, so you step out of the bushes and begin searching for anything of interest. Just then, several huge orcs bellow as they leap out of the brush and attack you.",
+                        "state_change": "combat"
+                    },
                     "flee": "You run, from what you do not know, but in your panic you run headlong into a tree branch. When you come to, you are surrounded by a group of vicious looking orcs who bring their weapons down on you.",
                     "diplomacy": "",
                     "hide": "You attempt to find a hiding place in the nearby brush. You hear a gutteral war cry as a group of orcs emerge from the brush and charge toward you, having seen your attempts at stealth."
