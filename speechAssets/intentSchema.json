@@ -4,6 +4,9 @@
 			"intent": "ContinueGameIntent"
 		},
 		{
+			"intent": "ContinueJourney"
+		},
+		{
 			"intent": "FailIntent"
 		},
 		{
