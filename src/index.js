@@ -226,7 +226,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     },
 
     // User defeats enemy
-    'PassIntent': function () {
+    'PassIntent': function () { //FIXME: remove temporary state-linking intents
         this.attributes['didUserDefeatEnemy'] = true;
         this.handler.state = states.COMBAT_END;
         this.attributes['speechOutput'] = "Transitioning to COMBAT END. You can search the area, or continue your journey. What would you like to do?"; // add intents in combatEndHandlers to handle investigation. Transition back to forestscene, add 'enemyDefeated' session attrib?
@@ -234,7 +234,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     },
 
     // User hp hits 0
-    'FailIntent': function () {
+    'FailIntent': function () {//FIXME: remove temporary state-linking intents
         this.attributes['didUserDefeatEnemy'] = false;
         this.handler.state = states.COMBAT_END;
         this.attributes['speechOutput'] = "Transitioning to COMBAT END. Would you like to play again?";
@@ -243,8 +243,18 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
     // Handles user actions
     'UserActionIntent' : function () {
-        var actionRequestedByUser = this.event.request.intent.slots.Action; // get the action from the user
-        //FIXME: add handling for combat_scene
+        var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
+        var action;
+        var roll_success = true; //FIXME: temporary variable to represent roll of dice
+
+            if (roll_success) {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["combat"]["action_success"][actionRequestedByUser]; // check the requested action against the actions in scene
+            } else {
+                action = langEN.USER_ACTIONS[this.attributes["scene"]]["combat"]["action_failure"][actionRequestedByUser];
+            }
+
+        this.attributes["speechOutput"] = action;
+        this.emit(this.attributes["speechOutput"]); //FIXME: implement correct emit statement
 
     },
 
@@ -288,8 +298,6 @@ const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
-    ''
-
     'AMAZON.YesIntent': function () {
         this.handler.state = states.ENDGAME;
         this.attributes['speechOutput'] = "YES: " + this.handler.state + ". Okay let me get a new game started for you..."; //FIXME: replace with correct messaging
@@ -309,13 +317,6 @@ const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
         this.handler.state = states.ENDGAME;
         this.emitWithState('EndGameIntent');
     },
-    //FIXME: refactor this into a UserActionIntent
-    // 'SearchTheArea': function () {
-    //     this.handler.state = states.ENDGAME;
-    //     this.attributes['speechOutput'] = "SEARCH: " + this.handler.state + ". We would transition back to the forest here, and have the user look around within a conditional check of didUserDefeatEnemy."
-    //                                                  + " For now, we will simply exit the game, and reset for a new game.";
-    //     this.emit('EndGameIntent');
-    // },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT: " + this.handler.state; //FIXME: replace with correct messaging
@@ -420,7 +421,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         }
 
         this.attributes["speechOutput"] = action;
-        this.emit(this.attributes["speechOutput"]);
+        this.emit(this.attributes["speechOutput"]); //FIXME: implement correct emit statement
     },
 
     // User says attack
@@ -451,14 +452,14 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         this.emit(':ask', this.attributes['speechOutput']);
     },
 
-    'PassIntent': function () {
+    'PassIntent': function () { //FIXME: remove temporary state linking intents
         this.handler.state = states.USER_SEES_ENEMY;
         this.attributes['speechOutput'] = "Transition to USER SEES ENEMY has not been implemented";
         this.emit(':tell', this.attributes['speechOutput']);
     },
 
     // User fails perception check
-    'FailIntent': function () {
+    'FailIntent': function () { //FIXME: remove temporary state linking intents
         this.handler.state = states.COMBAT;
         this.attributes['speechOutput'] = "Transitioning to COMBAT. Say pass to defeat the enemy or fail to lose.";
         this.emit(':ask', this.attributes['speechOutput']);
