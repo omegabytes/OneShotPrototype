@@ -105,7 +105,6 @@ exports.skillCheck = function(DC, bonus){
         result.pass = true;
     }
 
-    console.log(result);
     return result;
 };
 
@@ -134,6 +133,5 @@ exports.responseBuilder = function (scene, state, skill, roll, pass) {
         output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
     }
 
-    console.log(output);
     return output
 };
