@@ -351,14 +351,13 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     // Handles all user actions
     // get the action from scenes conditionally based on user request
     'UserActionIntent': function () {
+        var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
-        var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],classes.classes[this.session["character"]].stats[actionRequestedByUser]); // returns object
+        var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
 
-        // var response = dndLib.responseBuilder("forest",this.session["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
-        // var response = dndLib.responseBuilder("forest","enemy_not_seen","attack",15,true);
+        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
 
-        // this.attributes["speechOutput"] = response.description;
-        this.attributes["speechOutput"] = "action fired successfully";
+        this.attributes["speechOutput"] = "action fired successfully: " + response.description;
         this.emit(':tell',this.attributes["speechOutput"]); //FIXME: implement correct emit statement
     },
 

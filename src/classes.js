@@ -9,8 +9,8 @@ module.exports = {
 				"health": 25,
 				"attack": 7,
 				"damageDieSides": 12,
-				"perception": 3,
-				"stealth": 1,
+				"investigate": 3,
+				"hide": 1,
 				"diplomacy": 2
 			},
 			"abilities": {
@@ -28,8 +28,8 @@ module.exports = {
 				"health": 15,
 				"attack": 5,
 				"damageDieSides": 10,
-				"perception": 7,
-				"stealth": 3,
+				"investigate": 7,
+				"hide": 3,
 				"diplomacy": 3
 			},
 			"abilities": {
@@ -49,8 +49,8 @@ module.exports = {
 				"health": 20,
 				"attack": 5,
 				"damageDieSides": 8,
-				"perception": 5,
-				"stealth": 5,
+				"investigate": 5,
+				"hide": 5,
 				"diplomacy": 5
 			},
 			"abilities": {

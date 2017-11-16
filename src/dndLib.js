@@ -89,18 +89,14 @@ exports.skillCheck = function(DC, bonus) {
     }
 
     result.roll = total;
+    // result["roll"] = total;
 
     if (total >= DC) {
         result.pass = true;
+        // result["pass"] = true;
     }
 
-    if (description != "") {
-        if (result) {
-            var outcome = 'passed';
-        } else {
-            var outcome = 'failed';
-        }
-    }
+    return result;
 };
 
 /**
@@ -119,14 +115,14 @@ exports.responseBuilder = function (scene, state, skill, roll, pass) {
     };
 
     var successFail = pass ? "pass" : "fail";
-    resultObject = scenes.scenes[scene][state][successFail][skill];
+    var resultObject = scenes.scenes[scene][state][successFail][skill];
 
     if (resultObject.description != "") {
         output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
     } else {
         // If no description, action is useless
-        output = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
+        output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
     }
 
-    return output;
+    return output
 };
