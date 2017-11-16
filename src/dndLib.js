@@ -27,18 +27,6 @@ exports.rollDice = function(quantity,sides) {
     return output;
 };
 
-// Skill check function
-// exports.skillCheck = function(check, bonus, DC) {
-// 	check += bonus;
-// 	let result = false;
-//
-//     if (check >= DC) {
-//         result = true;
-//     }
-//
-//     return result;
-// };
-
 // validates the slot, matches the value, and sets it
 exports.validateAndSetSlot = function(slot) {
 	if (slot && slot.value) {
@@ -88,7 +76,8 @@ exports.getClassImages = function (className) {
 * @return an object containing the die roll + bonus and pass or fail boolean.
 */
 
-exports.skillCheck = function(DC, bonus){
+exports.skillCheck = function(DC, bonus) {
+    bonus = bonus || 0;
     var result = {
         "roll": 0,
         "pass": false
@@ -100,9 +89,11 @@ exports.skillCheck = function(DC, bonus){
     }
 
     result.roll = total;
+    // result["roll"] = total;
 
     if (total >= DC) {
         result.pass = true;
+        // result["pass"] = true;
     }
 
     return result;
@@ -115,7 +106,7 @@ exports.skillCheck = function(DC, bonus){
 * @param skill the skill that was checked.
 * @param roll skill check roll.
 * @param pass boolean, result of skill check.
-* @return an object containing the die roll + bonus and pass or fail boolean.
+* @return object containing response description and state change
 */
 exports.responseBuilder = function (scene, state, skill, roll, pass) {
     var output = {
