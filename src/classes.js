@@ -7,7 +7,7 @@ module.exports = {
 			"stats": {
 				"defense": 15,
 				"health": 25,
-				"attackBonus": 7,
+				"attack": 7,
 				"damageDieSides": 12,
 				"perception": 3,
 				"stealth": 1,
@@ -26,7 +26,7 @@ module.exports = {
             "stats": {
             	"defense": 10,
 				"health": 15,
-				"attackBonus": 5,
+				"attack": 5,
 				"damageDieSides": 10,
 				"perception": 7,
 				"stealth": 3,
@@ -47,7 +47,7 @@ module.exports = {
             "stats": {
             	"defense": 12,
 				"health": 20,
-				"attackBonus": 5,
+				"attack": 5,
 				"damageDieSides": 8,
 				"perception": 5,
 				"stealth": 5,
