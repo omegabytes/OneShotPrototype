@@ -137,6 +137,3 @@ exports.responseBuilder = function (scene, state, skill, roll, pass) {
     console.log(output);
     return output
 };
-
-var test = exports.skillCheck (12, 3);
-exports.responseBuilder ("forest", "enemy_not_seen", "investigate", 15, true);
