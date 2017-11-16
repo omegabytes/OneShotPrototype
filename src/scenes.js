@@ -2,7 +2,6 @@ module.exports = {
     "scenes" : {
         "forest": {
             "description": "You approach a clearing in the forest where a small campfire has been constructed. There are still some burning embers.",
-
             "prompt": "What do you do?",
             "options": {},
             "difficulty_classes": {
@@ -12,8 +11,7 @@ module.exports = {
                 "diplomacy": 18,
                 "hide": 15
             },
-            "card": {
-            },
+            "card": {},
             "enemies": {
                 "orc": 4
             },
@@ -113,47 +111,47 @@ module.exports = {
             "combat": {
                 "pass": {
                     "attack": {
-                    	"description": "",
+                    	"description":  "You hit your target.",
                     	"state_change": ""
-                    }, "You hit your target.",
+                    },
                     "investige": {
-                    	"description": "",
+                    	"description": "There's no time for that.",
                     	"state_change": ""
-                    }, "There's no time for that.",
+                    },
                     "flee": {
-                    	"description": "",
+                    	"description": "You do not look back as you flee, letting terror take control of your legs. You escape back to the safety of the road, gasping for breath, eyes trained on the forest. The orcs do not seem to have pursued. You carry on with your life, vowing never to take another risk again.",
                     	"state_change": ""
-                    }, "You do not look back as you flee, letting terror take control of your legs. You escape back to the safety of the road, gasping for breath, eyes trained on the forest. The orcs do not seem to have pursued. You carry on with your dreary life, vowing never to take another risk again, but always wondering what adventures awaited you in the forest.",
+                    },
                     "diplomacy": {
-                    	"description": "",
+                    	"description": "The orcs don't seem interested in talking at this point.",
                     	"state_change": ""
-                    }, "The orcs seem to be too enraged to talk.",
+                    },
                     "hide": {
-                    	"description": "",
+                    	"description": "You vanish into the shadows of the trees. The orcs seem confused, as if they've just seen a ghost.",
                     	"state_change": ""
-                    }, "You vanish into the shadows of the trees. The orcs seem confused, as if they've just seen a ghost."
+                    },
                 },
                 "fail": {
                     "attack": {
-                    	"description": "",
+                    	"description": "You miss your target.",
                     	"state_change": ""
-                    }, "You miss your target.",
+                    },
                     "investige": {
-                    	"description": "",
+                    	"description": "There's no time for that.",
                     	"state_change": ""
-                    }, "There's no time for that.",
+                    },
                     "flee": {
-                    	"description": "",
+                    	"description": "You attempt to flee, but you trip on a root. The orcs close in and leap on you, continuing their assault.",
                     	"state_change": ""
-                    }, "You attempt to flee, but you trip on a root. The orcs close in and leap on you, continuing their assault.",
+                    },
                     "diplomacy": {
-                    	"description": "",
+                    	"description": "Your attempts at communication seem to only enrage the orcs further.",
                     	"state_change": ""
-                    }, "Your attempts at communication seem to only enrage the orcs further.",
+                    },
                     "hide": {
-                    	"description": "",
+                    	"description": "You dive into some nearby bushes within full view of all your enemies. They chuckle as they surround the bushes and ruthlessly lay into you.",
                     	"state_change": ""
-                    }, "You dive into some nearby bushes within full view of all your enemies. They chuckle as they surround you and continue their assault."
+                    },
                 }
             }
         }
