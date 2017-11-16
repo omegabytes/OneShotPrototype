@@ -1,6 +1,7 @@
 var languageStrings = require('./languageStrings');
 var langEN = languageStrings.en.translation;
 var characterClasses = require('./classes');
+var scenes = require('./scenes');
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -92,7 +93,7 @@ exports.skillCheck = function(DC, bonus){
         "roll": 0,
         "pass": false
     };
-    var dieRoll = dndLib.rollDice(1, 20);
+    var dieRoll = exports.rollDice(1, 20);
     var total = dieRoll + bonus;
     if (total <= 0) {
         total = 1;
@@ -123,10 +124,10 @@ exports.responseBuilder = function (scene, state, skill, roll, pass) {
     };
 
     var successFail = pass ? "pass" : "fail";
-    resultObject = scenes[scene][state][successFail][skill];
+    var resultObject = scenes.scenes[scene][state][successFail][skill];
 
     if (resultObject.description != "") {
-        output.description = "You " + successFail "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
+        output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
     } else {
         // If no description, action is useless
         output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
