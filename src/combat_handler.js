@@ -2,7 +2,30 @@ var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var enemies = require('./enemies');
 
-var combatOrder = [];
+var combatOrder = []; // ignore combat order for now and have player always go first.
+
+// returns a combat object.
+exports.initializeCombat = function(scene) {
+	var combatObject = {
+		"enemy_list": createEnemyList(scene),
+		"combat_ended": false
+	};
+
+	return combatObject;
+};
+
+exports.combatRound = function(combatObject, speechInput) {
+	var output = speechInput;
+
+	output += exports.enemyTurn(combatObject.enemy_list);
+
+	if (enemy_list.length == 0 || player.health <= 0) {
+		combatObject.combat_ended = true;
+		output += " You have taken lethal damage from the enemies' attacks.";
+	}
+
+	return output;
+}
 
 exports.createEnemyList = function(scene) {
     var enemyList = [];
@@ -20,24 +43,12 @@ exports.createEnemyList = function(scene) {
     return enemyList;
 };
 
-exports.startCombat = function(enemies, player, scene) {
-	// determine combat order.
-	// return combatOrder array
-};
-
-exports.runCombat = function() {
-	// Player action?
-	// Check if enemies dead.
-	// Enemy actions?
-	// Check if player dead.
-};
-
-exports.runEnemies = function(enemyGroup) {
+exports.enemyTurn = function(enemyList) {
 	//compile enemy actions.
 	var enemyActions = "";
 
-	for (var i = 0; i < enemyGroup.length; i++) {
-		var enemy = enemyGroup[i];
+	for (var i = 0; i < enemyList.length; i++) {
+		var enemy = enemyList[i];
 		var enemyState = enemy.current_state;
 		var possibleActions = enemy.state_actions[enemyState];
 		var actionsListLength = Object.keys(possibleActions).length;
