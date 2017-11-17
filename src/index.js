@@ -356,6 +356,8 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
 
         var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
+        this.handler.state = dndLib.stateChangeHandler(response.state);
+        this.attributes["sceneState"] = dndLib.sceneStateHandler(response.state);
 
         this.attributes["speechOutput"] = "action fired successfully: " + response.description;
         this.emit(':tell',this.attributes["speechOutput"]); //FIXME: implement correct emit statement

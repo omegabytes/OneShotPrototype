@@ -126,3 +126,38 @@ exports.responseBuilder = function (scene, state, skill, roll, pass) {
 
     return output
 };
+
+exports.stateChangeHandler = function (nextState) {
+    var game_state = this.handler.state; //store the existing state in case the argument is a scene state
+    switch(nextState){
+        case "combat":
+            game_state= states.COMBAT;
+            break;
+        case "combat_end":
+            game_state= states.COMBAT_END;
+            break;
+        case "end_game":
+            game_state= states.ENDGAME;
+            break;
+        case "forest_scene":
+            game_state= states.FOREST_SCENE;
+            break;
+        case "start_mode":
+            game_state= state.START_MODE;
+            break;
+        default:
+            break;
+
+    }
+};
+
+exports.sceneStateHandler = function (nextState) {
+    var scene_state = this.attributes["sceneState"]; //store the scene state in case param is game state
+    switch(nextState){
+        case "enemy_seen":
+            scene_state =
+            break;
+        case "enemy_not_seen":
+            break;
+    }
+};
