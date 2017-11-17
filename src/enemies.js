@@ -32,7 +32,7 @@ module.exports = {
 					"charges forward and swings wildly, bashing you with its club.",
 					"grabs you by the throat and punches you in the face.",
 					"let's out a battle cry before landing a blow with its heavy club.",
-					"screams something unintelligible before slamming its elbow into your stomach."
+					"screams something unintelligible before slamming its elbow into your stomach.",
 					"stomps on your foot and laughs."
 				],
 				"flee": [

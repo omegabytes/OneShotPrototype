@@ -4,23 +4,39 @@ var enemies = require('./enemies');
 
 var combatOrder = [];
 
+exports.createEnemyList = function(scene) {
+    var enemyList = [];
+    var sceneEnemies = scenes.scenes[scene].enemies;
+    for (var enemyGroup in sceneEnemies) {
+    	var groupSize = sceneEnemies[enemyGroup];
+    	for (var i = 0; i < groupSize; i++) {
+    		var enemy = {};
+			Object.assign(enemy, enemies.monsters[enemyGroup]);
+			enemy.name = (enemy.name + " " + (i + 1));
+			enemyList.push(enemy);
+    	}
+    }
+
+    return enemyList;
+};
+
 exports.startCombat = function(enemies, player, scene) {
 	// determine combat order.
 	// return combatOrder array
-}
+};
 
 exports.runCombat = function() {
 	// Player action?
 	// Check if enemies dead.
 	// Enemy actions?
 	// Check if player dead.
-}
+};
 
 exports.runEnemies = function(enemyGroup) {
 	//compile enemy actions.
 	var enemyActions = "";
 
-	for(var i = 0; i < enemyGroup.length; i++) {
+	for (var i = 0; i < enemyGroup.length; i++) {
 		var enemy = enemyGroup[i];
 		var enemyState = enemy.current_state;
 		var possibleActions = enemy.state_actions[enemyState];
@@ -28,7 +44,7 @@ exports.runEnemies = function(enemyGroup) {
 		var randomPercentileRoll = dndLib.rollDice(1, 100);
 		var percentile = 0;
 
-		for(var action in possibleActions) {
+		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
 				var randomAction = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
@@ -47,7 +63,7 @@ exports.runEnemies = function(enemyGroup) {
 	}
 
 	return enemyActions;
-}
+};
 
 exports.dealDamage = function(attackingCharacter, hitCharacter) {
 	dndLib.dealDamage(attackingCharacter, hitCharacter);
@@ -57,8 +73,8 @@ exports.dealDamage = function(attackingCharacter, hitCharacter) {
 	}
 
 	return hitCharacterDied;
-}
+};
 
 exports.killCharacter = function() {
 
-}
+};

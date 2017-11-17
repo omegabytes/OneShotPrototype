@@ -39,6 +39,8 @@ const newSessionHandlers = {
             // game initialization
             // FIXME: encapsulate into function
             this.attributes['character'] = '';
+            this.attributes['currentEnemies'] = [];
+            this.attributes['currentScene'] = "forest";
             this.attributes['didUserDefeatEnemy'] = false;
             this.attributes['userHealth'] = '';
             this.attributes['sceneState'] = "enemy_not_seen";
