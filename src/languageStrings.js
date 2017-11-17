@@ -18,11 +18,12 @@ module.exports = {
             "HELP_MESSAGE":                                 "help message placeholder text",
             "HELP_REPROMPT":                                "help reprompt placeholder text",
             "INCOMPLETE_REQUEST":                           "I missed part of what you were saying, could you please repeat that?",
+            "LIST_OF_ACTIONS":                              "attack\n defend\n diplomacy\n flee\n hide\n investigate\n use ability",
             "NOT_FOUND_MESSAGE":                            "I\'m sorry, I currently do not know ",
             "NOT_FOUND_WITH_OBJECT_NAME":                   "the info for %s",
             "NOT_FOUND_WITHOUT_OBJECT_NAME":                "the info for that.",
             "REPEAT_MESSAGE":                               "Try saying repeat.",            
-            "REPROMPT":                                     "What else can I help with?",
+            "REPROMPT_GLOBAL":                                     "See the card in the Alexa app for a list of actions.",
             "SKILL_NAME":                                   "TableTop Pro",  //TBD           
             "STOP_MESSAGE":                                 "Goodbye!",            
             "UNHANDLED" :                                   "I'm sorry, I didn't get that. You can try repeating that command. For help on what you can ask, say 'help'",
