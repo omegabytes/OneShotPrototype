@@ -16,22 +16,22 @@
 			"intent": "PassIntent"
 		},
 		{
-			"intent": "RogueIntent"
+			"slots": [
+				{
+				"name": "Class",
+				"type": "LIST_OF_CLASSES"
+				}
+			],
+			"intent": "UserClassIntent"
 		},
 		{
 			"slots": [
 				{
 					"name": "Action",
-					"type": "USER_ACTIONS"
+					"type": "LIST_OF_USER_ACTIONS"
 				}
 			],
 			"intent": "UserActionIntent"
-		},
-		{
-			"intent": "WarriorIntent"
-		},
-		{
-			"intent": "WizardIntent"
 		},
 		{
 			"intent": "Unhandled"
