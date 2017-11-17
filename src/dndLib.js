@@ -120,24 +120,19 @@ exports.skillCheck = function(DC, bonus) {
 * @param pass boolean, result of skill check.
 * @return object containing response description and state change
 */
+
 exports.responseBuilder = function (scene, sceneState, skill, roll, pass) {
-    var output = {
-        "description": "",
-        "state_change": "",
-        "scene_state_change" : sceneState
-    };
-
     var successFail = pass ? "pass" : "fail";
-    var resultObject = scenes.scenes[scene][sceneState][successFail][skill];
+    var output = scenes.scenes[scene][sceneState][successFail][skill];
 
-    if (resultObject.description != "") {
-        output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
+    if (output.description) {
+        output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + output.description;
     } else {
         // If no description, action is useless
         output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
     }
 
-    return output
+    return output;
 };
 
 exports.stateChangeHandler = function (nextState) {

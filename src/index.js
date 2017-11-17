@@ -140,10 +140,11 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     'AMAZON.YesIntent': function () {
         this.handler.state = states.FOREST_SCENE;
         this.attributes['userHealth'] = dndLib.getStat(this.attributes['character'], 'health'); // sets the health of the user
+        this.attributes['gameInProgress'] = true;
 
         this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins! ";
 
-        this.attributes['speechOutput'] += scenes.scenes.forest.description + scenes.scenes.forest.prompt;//FIXME: add description for the next scene
+        this.attributes['speechOutput'] += scenes.scenes.forest.description + scenes.scenes.forest.prompt;
         this.emit(':ask', this.attributes['speechOutput']);
     },
     'AMAZON.NoIntent': function () {
@@ -298,15 +299,14 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     'EndGameIntent' : function () {
         this.attributes["gameInProgress"] = false;
         // this.handler.state = states.START_MODE; //FIXME: what state should this be? Users opening the skill for the first time won't have any state stored. Can it be null?
-        this.handler.state = '';
 
         if (this.attributes['didUserDefeatEnemy']){
-            this.attributes['speechOutput'] = 'You won. Goodbye';
+            this.attributes['speechOutput'] += 'You won. Thanks for playing!';
         } else {
-            this.attributes['speechOutput'] = 'You lost. Goodbye.';
+            this.attributes['speechOutput'] += 'You lost. Thanks for playing!';
         }
 
-        this.emit('NewSession');
+        this.emit(':tell', this.attributes['speechOutput']);
     },
     'AMAZON.YesIntent': function () {
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
@@ -351,22 +351,31 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     // Handles all user actions
     // get the action from scenes conditionally based on user request
     'UserActionIntent': function () {
+        this.attributes['repromptSpeech'] = langEN.REPROMPT_GLOBAL;
         var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
-
         var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
 
         // check if the game state needs to change
-        if(response.state){
-            this.handler.state = dndLib.stateChangeHandler(response.state);
+        if(response.state_change){
+            this.attributes["speechOutput"] = response.description;
+            // TODO: if combat, set up combat
+            // if end_game, transition to endgame
+            if(response.state_change == "end_game"){
+                // this.handler.state = dndLib.stateChangeHandler(response.state_change);
+                this.handler.state = states.ENDGAME;
+                this.emitWithState('EndGameIntent');
+            }
+        } else {
+            // update the scene state
+            if(response.scene_state_change) {
+                this.attributes["sceneState"] = response.scene_state_change;
+            }
+
+            this.attributes["speechOutput"] = response.description + " " + scenes.scenes.forest.prompt;
+            this.emit(':ask',this.attributes["speechOutput"], this.attributes['repromptSpeech']);
         }
-
-        // update the scene state
-        this.attributes["sceneState"] = response.scene_state_change;
-
-        this.attributes["speechOutput"] = response.description;
-        this.emit(':tell',this.attributes["speechOutput"]); //FIXME: implement correct emit statement
     },
 
     'PassIntent': function () { //FIXME: remove temporary state linking intents
