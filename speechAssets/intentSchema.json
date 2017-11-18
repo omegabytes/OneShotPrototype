@@ -7,13 +7,7 @@
 			"intent": "ContinueJourney"
 		},
 		{
-			"intent": "FailIntent"
-		},
-		{
 			"intent": "MoreInfoIntent"
-		},
-		{
-			"intent": "PassIntent"
 		},
 		{
 			"slots": [
