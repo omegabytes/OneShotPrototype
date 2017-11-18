@@ -13,7 +13,7 @@ exports.handler = function(event,context,callback) {
     alexa.appId = APPID;
     alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation
     alexa.resources = languageStrings;
-    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers, userSeesEnemyHandlers);
+    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers);
     alexa.execute();
 };
 
@@ -428,46 +428,6 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = langEN.HELP_MESSAGE;
         this.attributes['repromptSpeech'] = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.RepeatIntent': function () {
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'SessionEndedRequest':function () {
-        this.emit(':tell', langEN.STOP_MESSAGE);
-    },
-    'Unhandled': function () {
-        this.attributes['speechOutput'] = langEN.UNHANDLED;
-        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    }
-});
-
-// The user passes the perception check and (conditionally) stealth checks prior to combat
-const userSeesEnemyHandlers = Alexa.CreateStateHandler(states.USER_SEES_ENEMY, {
-    'NewSession': function () {
-        this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
-    },
-
-    'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.NoIntent': function () {
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':tell', this.attributes['speechOutput']);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
     'AMAZON.RepeatIntent': function () {
