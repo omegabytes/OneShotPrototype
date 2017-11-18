@@ -383,7 +383,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     'EntryPoint': function () {
         var cardTitle = "You find yourself in a forest";
         var cardOutput = scenes.scenes.forest.description;
-        var imageObject = {
+        var imageObject = { //FIXME: image not displaying
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest.jpg"
         };
@@ -471,10 +471,18 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
 
     'AMAZON.YesIntent': function () {
         this.handler.state = states.CHAR_SELECT;
+
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
             + 'You can be a wizard, a rogue, or a warrior. What do you choose?';
         this.attributes['repromptSpeech'] = 'Say wizard, rogue, or warrior to choose a class, or say exit to quit';
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+
+        var cardTitle = "Character Select";
+        var imageObject = { //FIXME: image not displaying
+            smallImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg",
+            largeImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg"
+        };
+
+        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,"",imageObject);
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Thanks for playing!";
