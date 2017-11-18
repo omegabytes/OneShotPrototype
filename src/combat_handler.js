@@ -5,7 +5,8 @@ var enemies = require('./enemies');
 var combatInstance = {
 	"enemy_list": [],
 	"player_character": {},
-	"combat_ended": false
+	"enemy_defeated": false,
+	"player_defeated": false
 };
 
 //var combatOrder = []; // ignore combat order for now and have player always go first.
@@ -21,9 +22,10 @@ exports.combatRound = function(speechInput) {
 
 	output += exports.enemyTurn(combatInstance.enemy_list);
 
-	if (enemy_list.length == 0 || player.health <= 0) {
-		combatInstance.combat_ended = true;
-		output += " You have taken lethal damage from the enemies' attacks.";
+	if (combatInstance.player_character.health <= 0) {
+		combatInstance.player_defeated = true;
+	} else if (combatInstance.enemy_list.length == 0) {
+		combatInstance.enemy_defeated = true;
 	}
 
 	return output;
