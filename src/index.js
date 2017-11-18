@@ -181,6 +181,10 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+    'CombatEntryPoint': function () { //FIXME: implement combat routine
+      this.attributes['speechOutput'] = "The combat scene would be here. Say yes to win or no to lose.";
+      this.emit(':ask', this.attributes['speechOutput']);
+    },
 
     // Handles user actions
     'UserActionIntent' : function () {
@@ -193,11 +197,15 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     },
 
     'AMAZON.YesIntent': function () {
+        this.handler.state = states.ENDGAME;
+        this.attributes['sceneState'] = "win";
         this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
     'AMAZON.NoIntent': function () {
+        this.handler.state = states.ENDGAME;
+        this.attributes['sceneState'] = "lose";
         this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
         this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':tell', this.attributes['speechOutput']);
@@ -345,6 +353,10 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         if(response.state_change){
             this.attributes["speechOutput"] = response.description;
             // TODO: if combat, set up combat
+            if(response.state_change == "combat"){
+                this.handler.state =states.COMBAT;
+                this.emitWithState('CombatEntryPoint');
+            }
             // if end_game, transition to endgame
             if(response.state_change == "end_game"){
                 // this.handler.state = dndLib.stateChangeHandler(response.state_change);

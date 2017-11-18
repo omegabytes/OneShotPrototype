@@ -1,6 +1,9 @@
 {
 	"intents": [
 		{
+			"intent": "CombatEntryPoint"
+		},
+		{
 			"intent": "ContinueGameIntent"
 		},
 		{

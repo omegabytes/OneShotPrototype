@@ -31,7 +31,7 @@ module.exports = {
                     "flee": {
                     	"description": "You run, from what you do not know. You escape back to the safety of the road. You carry on with your dreary life, vowing never to take another risk again, but always wondering what adventures awaited you in the forest.",
                     	"state_change": "end_game",
-                        "scene_state_change" : ""
+                        "scene_state_change" : "lose"
                     },
                     "diplomacy": {
                     	"description": "",
@@ -79,15 +79,15 @@ module.exports = {
                     	"state_change": "combat",
                         "scene_state_change" : ""
                     },
-                    "investige": {
-                    	"description": "The orcs are muscle bound brutes, covered in poor quality tattoos and animal trophies. They do not seem very intelligent, prefering hand to hand combat over any other sort of interaction.",
+                    "investigate": {
+                    	"description": "The orcs are muscle bound brutes, covered in poor quality tattoos and animal trophies. They do not seem very intelligent, preferring hand to hand combat over any other sort of interaction.",
                     	"state_change": "",
                         "scene_state_change" : ""
                     },
                     "flee": {
                     	"description": "You do not look back as you flee, letting terror take control of your legs. You escape back to the safety of the road, gasping for breath, eyes trained on the forest. The orcs do not seem to have pursued. You carry on with your dreary life, vowing never to take another risk again, but always wondering what adventures awaited you in the forest.",
                     	"state_change": "end_game",
-                        "scene_state_change" : ""
+                        "scene_state_change" : "lose"
                     },
                     "diplomacy": {
                     	"description": "The orcs are intrigued by your attempt to communicate. The largest orc steps forward and challenges you to a physical contest. Do you accept?",
@@ -106,7 +106,7 @@ module.exports = {
                     	"state_change": "combat",
                         "scene_state_change" : ""
                     },
-                    "investige": {
+                    "investigate": {
                     	"description": "You can not get a good read on the orcs, they seem nice enough.",
                     	"state_change": "",
                         "scene_state_change" : ""
@@ -135,7 +135,7 @@ module.exports = {
                     	"state_change": "",
                         "scene_state_change" : ""
                     },
-                    "investige": {
+                    "investigate": {
                     	"description": "There's no time for that.",
                     	"state_change": "",
                         "scene_state_change" : ""
@@ -143,7 +143,7 @@ module.exports = {
                     "flee": {
                     	"description": "You do not look back as you flee, letting terror take control of your legs. You escape back to the safety of the road, gasping for breath, eyes trained on the forest. The orcs do not seem to have pursued. You carry on with your life, vowing never to take another risk again.",
                     	"state_change": "",
-                        "scene_state_change" : ""
+                        "scene_state_change" : "lose"
                     },
                     "diplomacy": {
                     	"description": "The orcs don't seem interested in talking at this point.",
@@ -162,7 +162,7 @@ module.exports = {
                     	"state_change": "",
                         "scene_state_change" : ""
                     },
-                    "investige": {
+                    "investigate": {
                     	"description": "There's no time for that.",
                     	"state_change": "",
                         "scene_state_change" : ""
