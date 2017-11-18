@@ -382,7 +382,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     // start here, prompt user for next action
     'EntryPoint': function () {
         var cardTitle = "You find yourself in a forest";
-        var cardOutput = scenes.scenes.forest.description;
+        var cardOutput = "What do you do?";
         var imageObject = { //FIXME: image not displaying
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest.jpg"
@@ -477,12 +477,12 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
         this.attributes['repromptSpeech'] = 'Say wizard, rogue, or warrior to choose a class, or say exit to quit';
 
         var cardTitle = "Character Select";
-        var imageObject = { //FIXME: image not displaying
+        var imageObject = { 
             smallImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg",
             largeImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg"
         };
 
-        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,"",imageObject);
+        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,this.attributes['repromptSpeech'],imageObject);
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Thanks for playing!";
