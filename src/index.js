@@ -39,7 +39,7 @@ const newSessionHandlers = {
             // game initialization
             // FIXME: encapsulate into function
             this.attributes['character'] = '';
-            this.attributes['didUserDefeatEnemy'] = false;
+            this.attributes['userDidDefeatEnemy'] = false;
             this.attributes['userHealth'] = '';
             this.attributes['sceneState'] = "enemy_not_seen";
 
@@ -144,8 +144,8 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
 
         this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins! ";
 
-        this.attributes['speechOutput'] += scenes.scenes.forest.description + scenes.scenes.forest.prompt;
-        this.emit(':ask', this.attributes['speechOutput']);
+        this.attributes['speechOutput'] += scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt; //TODO: move this into a forest scene entry point
+        this.emit(':ask', this.attributes['speechOutput']); //change this to emit the forest scene entry point
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Okay, which character would you like to play as?";
@@ -182,7 +182,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () { //FIXME: implement combat routine
-      this.attributes['speechOutput'] = "The combat scene would be here. Say yes to win or no to lose.";
+      this.attributes['speechOutput'] += " The combat scene would be here. Say yes to win or no to lose.";
       this.emit(':ask', this.attributes['speechOutput']);
     },
 
@@ -198,17 +198,16 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
     'AMAZON.YesIntent': function () {
         this.handler.state = states.ENDGAME;
-        this.attributes['sceneState'] = "win";
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        // this.attributes['sceneState'] = "win";
+        // this.attributes['userDidDefeatEnemy'] = true;
+
+        this.emitWithState('EndGameIntent');
     },
     'AMAZON.NoIntent': function () {
         this.handler.state = states.ENDGAME;
-        this.attributes['sceneState'] = "lose";
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':tell', this.attributes['speechOutput']);
+        // this.attributes['sceneState'] = "lose";
+        // this.attributes['userDidDefeatEnemy'] = false; // this is false by default, I reset it here just to be cautious
+        this.emitWithState('EndGameIntent');
     },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
@@ -290,24 +289,13 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     },
     'EndGameIntent' : function () {
         this.attributes["gameInProgress"] = false;
-        // this.handler.state = states.START_MODE; //FIXME: what state should this be? Users opening the skill for the first time won't have any state stored. Can it be null?
 
-        if (this.attributes['didUserDefeatEnemy']){
-            this.attributes['speechOutput'] += 'You won. Thanks for playing!';
+        if (this.attributes['userDidDefeatEnemy']){
+            this.attributes['speechOutput'] = ' You won. Thanks for playing!';
         } else {
-            this.attributes['speechOutput'] += 'You lost. Thanks for playing!';
+            this.attributes['speechOutput'] = ' You lost. Thanks for playing!';
         }
 
-        this.emit(':tell', this.attributes['speechOutput']);
-    },
-    'AMAZON.YesIntent': function () {
-        this.attributes['speechOutput'] = "YES: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.NoIntent': function () {
-        this.attributes['speechOutput'] = "NO: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
         this.emit(':tell', this.attributes['speechOutput']);
     },
     'AMAZON.HelpIntent': function () {
@@ -339,6 +327,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+    // TODO: add entry point
 
     // Handles all user actions
     // get the action from scenes conditionally based on user request
@@ -347,19 +336,21 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
-        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
+        // var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
+        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,false);
+
+        this.attributes["speechOutput"] = response.description;
 
         // check if the game state needs to change
         if(response.state_change){
-            this.attributes["speechOutput"] = response.description;
-            // TODO: if combat, set up combat
+            // if combat TODO: set up combat
             if(response.state_change == "combat"){
+                this.attributes["speechOutput"] = response.description;
                 this.handler.state =states.COMBAT;
                 this.emitWithState('CombatEntryPoint');
             }
             // if end_game, transition to endgame
             if(response.state_change == "end_game"){
-                // this.handler.state = dndLib.stateChangeHandler(response.state_change);
                 this.handler.state = states.ENDGAME;
                 this.emitWithState('EndGameIntent');
             }
@@ -369,7 +360,10 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
                 this.attributes["sceneState"] = response.scene_state_change;
             }
 
-            this.attributes["speechOutput"] = response.description + " " + scenes.scenes.forest.prompt;
+            // as long as the scene state doesn't change to lose, keep prompting
+            if(response.scene_state_change != "lose") {
+                this.attributes["speechOutput"] +=  scenes.scenes.forest.prompt;
+            }
             this.emit(':ask',this.attributes["speechOutput"], this.attributes['repromptSpeech']);
         }
     },
