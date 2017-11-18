@@ -62,13 +62,15 @@ exports.enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				var randomAction = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
-				var enemyAction = enemy.action_descriptions[action][randomAction];
+				// add dice rolling functions here
+
+				var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
+				var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
 
 				// generate a generic action description if there is no description.
-				if (!enemyAction) {
-					var randomAction = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-					var enemyAction = enemies.generic_action_descriptions[action][randomAction];
+				if (!enemyActionDescription) {
+					randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
+					enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
 				}
 
 				enemyActions += (enemy.name + ' ' + enemyAction + ' ');
