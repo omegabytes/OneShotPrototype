@@ -2,26 +2,30 @@ var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var enemies = require('./enemies');
 
-var combatOrder = []; // ignore combat order for now and have player always go first.
-
-// returns a combat object.
-exports.initializeCombat = function(scene) {
-	var combatObject = {
-		"enemy_list": createEnemyList(scene),
-		"combat_ended": false
-	};
-
-	return combatObject;
+var combatInstance = {
+	"enemy_list": [],
+	"player_character": {},
+	"enemy_defeated": false,
+	"player_defeated": false
 };
 
-exports.combatRound = function(combatObject, speechInput) {
+//var combatOrder = []; // ignore combat order for now and have player always go first.
+
+// Sets up combat instance
+exports.initializeCombat = function(scene, playerCharacter) {
+	combatInstance.enemy_list = createEnemyList(scene);
+	combatInstance.player_character = playerCharacter;
+};
+
+exports.combatRound = function(speechInput) {
 	var output = speechInput;
 
-	output += exports.enemyTurn(combatObject.enemy_list);
+	output += enemyTurn(combatInstance.enemy_list);
 
-	if (enemy_list.length == 0 || player.health <= 0) {
-		combatObject.combat_ended = true;
-		output += " You have taken lethal damage from the enemies' attacks.";
+	if (combatInstance.player_character.health <= 0) {
+		combatInstance.player_defeated = true;
+	} else if (combatInstance.enemy_list.length == 0) {
+		combatInstance.enemy_defeated = true;
 	}
 
 	return output;
@@ -43,7 +47,7 @@ exports.createEnemyList = function(scene) {
     return enemyList;
 };
 
-exports.enemyTurn = function(enemyList) {
+function enemyTurn = function(enemyList) {
 	//compile enemy actions.
 	var enemyActions = "";
 
@@ -58,13 +62,15 @@ exports.enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				var randomAction = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
-				var enemyAction = enemy.action_descriptions[action][randomAction];
+				actionHandler(action);
+
+				var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
+				var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
 
 				// generate a generic action description if there is no description.
-				if (!enemyAction) {
-					var randomAction = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-					var enemyAction = enemies.generic_action_descriptions[action][randomAction];
+				if (!enemyActionDescription) {
+					randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
+					enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
 				}
 
 				enemyActions += (enemy.name + ' ' + enemyAction + ' ');
@@ -76,16 +82,13 @@ exports.enemyTurn = function(enemyList) {
 	return enemyActions;
 };
 
-exports.dealDamage = function(attackingCharacter, hitCharacter) {
-	dndLib.dealDamage(attackingCharacter, hitCharacter);
-
-	if (hitCharacter.health <= 0) {
-		hitCharacterDead = true;
+function actionHandler(action, character, target) {
+	switch (action) {
+		case 'attack': {
+			var resultObject = dndLib.skillCheck(target.defense, character.attack);
+			if (resultObject.pass) {
+				dndLib.dealDamage(character, target);
+			}
+		}
 	}
-
-	return hitCharacterDied;
-};
-
-exports.killCharacter = function() {
-
 };
