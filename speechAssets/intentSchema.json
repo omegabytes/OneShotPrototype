@@ -10,6 +10,12 @@
 			"intent": "ContinueJourney"
 		},
 		{
+			"intent": "ContinuePoint"
+		},
+		{
+			"intent": "EntryPoint"
+		},
+		{
 			"intent": "MoreInfoIntent"
 		},
 		{
