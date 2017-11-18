@@ -111,7 +111,7 @@ const continueHandlers = Alexa.CreateStateHandler(states.CONTINUE_GAME, {
     },
     'ContinueGameIntent': function () {
         this.handler.state = this.attributes['priorState'];
-        this.emitWithState('ContinuePoint');
+        this.emitWithState('EntryPoint');
     },
     'AMAZON.YesIntent': function () {
         this.emit('ContinueGameIntent');
@@ -191,14 +191,13 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     },
 
     'AMAZON.YesIntent': function () {
-        this.handler.state = states.FOREST_SCENE;
+        this.handler.state = states.FOREST_SCENE; // we can introduce an intent that asks the user where they want to begin later
         this.attributes['userHealth'] = dndLib.getStat(this.attributes['character'], 'health'); // sets the health of the user
         this.attributes['gameInProgress'] = true;
 
         this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins! ";
 
-        this.attributes['speechOutput'] += scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt; //TODO: move this into a forest scene entry point
-        this.emit(':ask', this.attributes['speechOutput']); //change this to emit the forest scene entry point
+        this.emitWithState('EntryPoint');
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Okay, which character would you like to play as?";
@@ -380,11 +379,17 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
 
-    // Entry point for continue game
-    'ContinuePoint': function () {
-      this.emit(':ask', "Hey! You made it to the entry point! What do you do?");
+    // start here, prompt user for next action
+    'EntryPoint': function () {
+        var cardTitle = "You find yourself in a forest";
+        var cardOutput = scenes.scenes.forest.description;
+        var imageObject = {
+            "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest.jpg",
+            "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest.jpg"
+        };
+        this.attributes['speechOutput'] += scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt;
+        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
     },
-    // TODO: add entry point
 
     // Handles all user actions
     // get the action from scenes conditionally based on user request
