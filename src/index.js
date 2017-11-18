@@ -13,7 +13,7 @@ exports.handler = function(event,context,callback) {
     alexa.appId = APPID;
     alexa.dynamoDBTableName = "OneShotPrototypeTable"; // FIXME: add db error handling and encapsulation (CRUD)
     alexa.resources = languageStrings;
-    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, continueHandlers, combatBeginHandlers, combatEndHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers);
+    alexa.registerHandlers(newSessionHandlers, charSelectHandlers, continueHandlers, combatBeginHandlers, endGameHandlers, forestSceneHandlers, startGameHandlers);
     alexa.execute();
 };
 
@@ -21,7 +21,6 @@ exports.handler = function(event,context,callback) {
 const states = {
     CHAR_SELECT:        '_CHARSELECT',         // Prompts user to select a character, and gives info on character
     COMBAT:             '_COMBAT',             // User enters combat
-    COMBAT_END:         '_COMBATEND',          // User exits combat with either a success or failure attribute
     CONTINUE_GAME:      '_CONTINUE',           // asks user if they want to continue on ongoing game, or start a new one
     ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
     ENEMY_SEES_USER:    '_ENEMYSEESUSER',      // Messaging and options if user fails perception/stealth checks, user attacks second
@@ -285,55 +284,6 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     }
 });
 
-// User defeats enemy. This may be handled in the COMBAT state
-const combatEndHandlers = Alexa.CreateStateHandler(states.COMBAT_END, {
-    'NewSession': function () {
-        this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
-    },
-
-    'AMAZON.YesIntent': function () {
-        this.handler.state = states.ENDGAME;
-        this.attributes['speechOutput'] = "YES: " + this.handler.state + ". Okay let me get a new game started for you..."; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.NoIntent': function () {
-        this.handler.state = states.ENDGAME;
-        this.attributes["gameInProgress"] = false;
-        this.attributes['speechOutput'] = "NO: " + this.handler.state + ". Okay, thanks for playing!"; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':tell', this.attributes['speechOutput']);
-    },
-
-    // After combat, user opts to skip searching the area and continues on, or user finishes searching the area
-    'ContinueJourney': function () {
-        this.handler.state = states.ENDGAME;
-        this.emitWithState('EndGameIntent');
-    },
-    'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.RepeatIntent': function () {
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    },
-    'AMAZON.StopIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'AMAZON.CancelIntent': function () {
-        this.emit('SessionEndedRequest');
-    },
-    'SessionEndedRequest':function () {
-        this.emit(':tell', langEN.STOP_MESSAGE);
-    },
-    'Unhandled': function () {
-        this.attributes['speechOutput'] = langEN.UNHANDLED;
-        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-    }
-});
-
 // User exits combat either by winning, losing, or runs away
 const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     'NewSession': function () {
@@ -382,10 +332,10 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     // start here, prompt user for next action
     'EntryPoint': function () {
         var cardTitle = "You find yourself in a forest";
-        var cardOutput = "What do you do?";
+        var cardOutput = this.attributes['speechOutput']+ " "+ "What do you do?";
         var imageObject = { //FIXME: image not displaying
-            "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest.jpg",
-            "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest.jpg"
+            "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest3.jpg",
+            "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest3.jpg"
         };
         this.attributes['speechOutput'] += scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt;
         this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
@@ -477,9 +427,9 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
         this.attributes['repromptSpeech'] = 'Say wizard, rogue, or warrior to choose a class, or say exit to quit';
 
         var cardTitle = "Character Select";
-        var imageObject = { 
-            smallImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg",
-            largeImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select.jpg"
+        var imageObject = {
+            smallImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg",
+            largeImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg"
         };
 
         this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,this.attributes['repromptSpeech'],imageObject);
