@@ -20,7 +20,7 @@ exports.initializeCombat = function(scene, playerCharacter) {
 exports.combatRound = function(speechInput) {
 	var output = speechInput;
 
-	output += exports.enemyTurn(combatInstance.enemy_list);
+	output += enemyTurn(combatInstance.enemy_list);
 
 	if (combatInstance.player_character.health <= 0) {
 		combatInstance.player_defeated = true;
@@ -47,7 +47,7 @@ exports.createEnemyList = function(scene) {
     return enemyList;
 };
 
-exports.enemyTurn = function(enemyList) {
+function enemyTurn = function(enemyList) {
 	//compile enemy actions.
 	var enemyActions = "";
 
@@ -62,7 +62,7 @@ exports.enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				// add dice rolling functions here
+				actionHandler(action);
 
 				var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
 				var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
@@ -82,16 +82,13 @@ exports.enemyTurn = function(enemyList) {
 	return enemyActions;
 };
 
-exports.dealDamage = function(attackingCharacter, hitCharacter) {
-	dndLib.dealDamage(attackingCharacter, hitCharacter);
-
-	if (hitCharacter.health <= 0) {
-		hitCharacterDead = true;
+function actionHandler(action, character, target) {
+	switch (action) {
+		case 'attack': {
+			var resultObject = dndLib.skillCheck(target.defense, character.attack);
+			if (resultObject.pass) {
+				dndLib.dealDamage(character, target);
+			}
+		}
 	}
-
-	return hitCharacterDied;
-};
-
-exports.killCharacter = function() {
-
 };

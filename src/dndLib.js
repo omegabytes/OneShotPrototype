@@ -78,7 +78,7 @@ exports.getClassImages = function (className) {
 
 exports.skillCheck = function(DC, bonus) {
     bonus = bonus || 0;
-    var result = {
+    var resultObject = {
         "roll": 0,
         "pass": false
     };
@@ -88,15 +88,15 @@ exports.skillCheck = function(DC, bonus) {
         total = 1;
     }
 
-    result.roll = total;
+    resultObject.roll = total;
     // result["roll"] = total;
 
     if (total >= DC) {
-        result.pass = true;
+        resultObject.pass = true;
         // result["pass"] = true;
     }
 
-    return result;
+    return resultObject;
 };
 
 exports.dealDamage = function(attackingCharacter, hitCharacter) {
