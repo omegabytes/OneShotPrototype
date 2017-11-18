@@ -2,25 +2,27 @@ var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var enemies = require('./enemies');
 
-var combatOrder = []; // ignore combat order for now and have player always go first.
-
-// returns a combat object.
-exports.initializeCombat = function(scene) {
-	var combatObject = {
-		"enemy_list": createEnemyList(scene),
-		"combat_ended": false
-	};
-
-	return combatObject;
+var combatInstance = {
+	"enemy_list": [],
+	"player_character": {},
+	"combat_ended": false
 };
 
-exports.combatRound = function(combatObject, speechInput) {
+//var combatOrder = []; // ignore combat order for now and have player always go first.
+
+// Sets up combat instance
+exports.initializeCombat = function(scene, playerCharacter) {
+	combatInstance.enemy_list = createEnemyList(scene);
+	combatInstance.player_character = playerCharacter;
+};
+
+exports.combatRound = function(speechInput) {
 	var output = speechInput;
 
-	output += exports.enemyTurn(combatObject.enemy_list);
+	output += exports.enemyTurn(combatInstance.enemy_list);
 
 	if (enemy_list.length == 0 || player.health <= 0) {
-		combatObject.combat_ended = true;
+		combatInstance.combat_ended = true;
 		output += " You have taken lethal damage from the enemies' attacks.";
 	}
 
