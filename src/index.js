@@ -245,36 +245,39 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         var playerCharacter = {};
         Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
         combatHandler.initializeCombat(this.attributes['scene'], playerCharacter);
-        this.attributes['speechOutput'] = ' You have entered combat.';
-        this.emit(':tell', this.attributes['speechOutput']);
+        this.attributes['speechOutput'] += ' You have entered combat. What would you like to do?';
+        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
+        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
 
     // Handles user actions
     'UserActionIntent' : function () {
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
 
-        if (actionRequestedByUser === "attack") {
-            this.attributes["speechOutput"] = combatHandler.combatRound();
-        }
+        this.attributes['speechOutput'] = 'User action intent, ' + actionRequestedByUser;
+        // if (actionRequestedByUser === "attack") {
+        //     this.attributes["speechOutput"] = combatHandler.combatRound();
+        // }
 
-        // check for end game conditions
-        var endGame = false;
-        var combatInstance = combatHandler.getCombatInstance();
+        // // check for end game conditions
+        // var endGame = false;
+        // var combatInstance = combatHandler.getCombatInstance();
 
-        if (combatInstance.enemy_defeated) {
-            this.attributes['userDidDefeatEnemy'] = true;
-            endGame = true;
-        } else if (combatInstance.player_defeated) {
-            this.attributes['userDidDefeatEnemy'] = false;
-            endGame = true;
-        }
+        // if (combatInstance.enemy_defeated) {
+        //     this.attributes['userDidDefeatEnemy'] = true;
+        //     endGame = true;
+        // } else if (combatInstance.player_defeated) {
+        //     this.attributes['userDidDefeatEnemy'] = false;
+        //     endGame = true;
+        // }
 
-        if (endGame) {
-            this.handler.state = states.ENDGAME;
-            this.emitWithState('EndGameIntent');
-        } else {
-            this.emit(this.attributes["speechOutput"]);
-        }
+        // if (endGame) {
+        //     this.handler.state = states.ENDGAME;
+        //     this.emitWithState('EndGameIntent');
+        // }
+
+        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
+        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
 
     },
 
@@ -386,7 +389,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
-        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,false);
+        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
         var cardTitle;
         var cardOutput;
 
