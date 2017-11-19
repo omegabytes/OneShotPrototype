@@ -24,7 +24,7 @@ exports.initializeCombat = function(scene, playerCharacter) {
 };
 
 exports.combatRound = function(speechInput) {
-	var output = speechInput + ' It is now the enemy turn. ';
+	var output = speechInput + ' It is now the enemy turn.';
 
 	output += enemyTurn(combatInstance.enemy_list);
 
@@ -71,7 +71,7 @@ function enemyTurn(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				enemyActions += enemyActionHandler(action, enemy, combatInstance.player_character) + ' ';
+				enemyActions += enemyActionHandler(action, enemy, combatInstance.player_character);
 				break;
 			}
 		}
@@ -124,7 +124,7 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
 	}
 
-	description = (enemy.name + ' ' + enemyActionDescription);
+	description = (' ' + enemy.name + ' ' + enemyActionDescription);
 
 	if (success) {
 		var attackSuccessString = ', it hits, dealing ' + damage + ' damage.';
@@ -143,4 +143,8 @@ function combatTest() {
 
 	exports.initializeCombat('forest', playerCharacter);
 	console.log(exports.combatRound('Player action.'));
+	console.log(exports.combatRound('Player action.'));
+	console.log(exports.combatRound('Player action.'));
 };
+
+combatTest();
