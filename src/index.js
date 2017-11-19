@@ -253,6 +253,9 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     // Handles user actions
     'UserActionIntent' : function () {
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
+        var cardTitle = actionRequestedByUser;
+        var cardOutput = 'Hello';
+        var imageObject = dndLib.getClassImages(this.attributes['character']);
 
         this.attributes['speechOutput'] = 'User action intent, ' + actionRequestedByUser;
         // if (actionRequestedByUser === "attack") {
@@ -278,6 +281,8 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
         this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
+
 
     },
 
