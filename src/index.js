@@ -389,7 +389,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
 
             // as long as the scene state doesn't change to lose, keep prompting
             if(response.scene_state_change != "lose") {
-                this.attributes["speechOutput"] +=  scenes.scenes.forest.prompt;
+                this.attributes["speechOutput"] = response.description + scenes.scenes.forest.prompt;
             }
 
             cardTitle = "You " + actionRequestedByUser;
