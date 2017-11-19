@@ -87,7 +87,7 @@ exports.getClassImages = function (className) {
 
 exports.skillCheck = function(DC, bonus) {
     bonus = bonus || 0;
-    var result = {
+    var resultObject = {
         "roll": 0,
         "pass": false
     };
@@ -97,15 +97,24 @@ exports.skillCheck = function(DC, bonus) {
         total = 1;
     }
 
-    result.roll = total;
+    resultObject.roll = total;
     // result["roll"] = total;
 
     if (total >= DC) {
-        result.pass = true;
+        resultObject.pass = true;
         // result["pass"] = true;
     }
 
-    return result;
+    return resultObject;
+};
+
+// deals damage to character, and returns the damage dealt if needed for output purposes
+exports.dealDamage = function(attackingCharacter, hitCharacter) {
+    var damage = exports.rollDice(1, attackingCharacter.stats.damageDieSides);
+
+    hitCharacter.stats.health -= damage;
+
+    return damage;
 };
 
 /**
