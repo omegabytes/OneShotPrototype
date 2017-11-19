@@ -3,17 +3,14 @@ var langEN = languageStrings.en.translation;
 var characterClasses = require('./classes');
 var scenes = require('./scenes');
 
-const states = {
-    CHAR_SELECT:        '_CHARSELECT',         // Prompts user to select a character, and gives info on character
-    COMBAT:             '_COMBAT',             // User enters combat
-    COMBAT_END:         '_COMBATEND',          // User exits combat with either a success or failure attribute
-    ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
-    ENEMY_SEES_USER:    '_ENEMYSEESUSER',      // Messaging and options if user fails perception/stealth checks, user attacks second
-    FOREST_SCENE:       '_FORESTSCENE',        // The first encounter, where the user is described a situation and asked what to do
-    // NEW_GAME:           '_NEWGAME',            // no current game in progress
-    START_MODE:         '_STARTMODE',          // Beginning of game with menu, start, and help prompts
-    USER_SEES_ENEMY:    '_USERSEESENEMY'       // User passes perception/stealth checks, attacks first
-};
+// const states = {
+//     CHAR_SELECT:        '_CHARSELECT',         // Prompts user to select a character, and gives info on character
+//     COMBAT:             '_COMBAT',             // User enters combat
+//     COMBAT_END:         '_COMBATEND',          // User exits combat with either a success or failure attribute
+//     ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
+//     FOREST_SCENE:       '_FORESTSCENE',        // The first encounter, where the user is described a situation and asked what to do
+//     START_MODE:         '_STARTMODE',          // Beginning of game with menu, start, and help prompts
+// };
 
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
@@ -135,27 +132,27 @@ exports.responseBuilder = function (scene, sceneState, skill, roll, pass) {
     return output;
 };
 
-exports.stateChangeHandler = function (nextState) {
-    var game_state = this.handler.state; //store the existing state in case the argument is a scene state
-
-    switch(nextState){
-        case "combat":
-            game_state = states.COMBAT;
-            break;
-        case "combat_end":
-            game_state = states.COMBAT_END;
-            break;
-        case "end_game":
-            game_state = states.ENDGAME;
-            break;
-        case "forest_scene":
-            game_state = states.FOREST_SCENE;
-            break;
-        case "start_mode":
-            game_state = state.START_MODE;
-            break;
-        default:
-            break;
-
-    }
-};
+// exports.stateChangeHandler = function (nextState) {
+//     var game_state = this.handler.state; //store the existing state in case the argument is a scene state
+//
+//     switch(nextState){
+//         case "combat":
+//             game_state = states.COMBAT;
+//             break;
+//         case "combat_end":
+//             game_state = states.COMBAT_END;
+//             break;
+//         case "end_game":
+//             game_state = states.ENDGAME;
+//             break;
+//         case "forest_scene":
+//             game_state = states.FOREST_SCENE;
+//             break;
+//         case "start_mode":
+//             game_state = state.START_MODE;
+//             break;
+//         default:
+//             break;
+//
+//     }
+// };

@@ -23,10 +23,8 @@ const states = {
     COMBAT:             '_COMBAT',             // User enters combat
     CONTINUE_GAME:      '_CONTINUE',           // asks user if they want to continue on ongoing game, or start a new one
     ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
-    ENEMY_SEES_USER:    '_ENEMYSEESUSER',      // Messaging and options if user fails perception/stealth checks, user attacks second
     FOREST_SCENE:       '_FORESTSCENE',        // The first encounter, where the user is described a situation and asked what to do
-    START_MODE:         '_STARTMODE',          // Beginning of game with menu, start, and help prompts
-    USER_SEES_ENEMY:    '_USERSEESENEMY'       // User passes perception/stealth checks, attacks first
+    START_MODE:         '_STARTMODE'           // Beginning of game with menu, start, and help prompts
 };
 
 // user opens the skill, either for the first time or is returning
@@ -394,7 +392,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
             }
 
             cardTitle = "You " + actionRequestedByUser;
-            cardOutput = his.attributes["speechOutput"];
+            cardOutput = this.attributes["speechOutput"];
             this.emit(':askWithCard',this.attributes["speechOutput"], this.attributes['repromptSpeech'],cardTitle,cardOutput);
         }
     },
