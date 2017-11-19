@@ -6,6 +6,7 @@ var langEN = languageStrings.en.translation;
 var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var classes = require('./classes');
+var combatHandler = require('./combat_handler');
 const APPID = require('./appID');
 
 exports.handler = function(event,context,callback) {
