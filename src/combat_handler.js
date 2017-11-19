@@ -23,19 +23,42 @@ exports.initializeCombat = function(scene, playerCharacter) {
 	combatInstance.player_character = playerCharacter;
 };
 
-exports.combatRound = function(speechInput) {
-	var output = speechInput + ' It is now the enemy turn.';
+exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput) {
+	var output = speechInput;
+	var playerCharacter = combatInstance.player_character;
+	var firstEnemy = combatInstance.enemy_list[0];
 
-	output += enemyTurn(combatInstance.enemy_list);
+	// resolve player attack
+	if (playerAction === 'attack') {
+		if (playerSkillCheckObject.pass) {
+			var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
+			output += ' You hit ' + firstEnemy.name + ' for ' + damage + ' damage.';
+		}
+	}
 
-	// check for end combat scenarios.
-	if (combatInstance.player_character.stats.health <= 0) {
-		combatInstance.player_defeated = true;
-		output += ' You have taken lethal damage from the enemy. You have died.'
-	} else if (combatInstance.enemy_list.length == 0) {
+	// check if the first enemy is dead
+	if (firstEnemy.stats.health <= 0) {
+		output += ' ' + firstEnemy.name + ' has been defeated.'
+		// remove the enemy from the enemy list
+		combatInstance.enemy_list.splice(0, 1);
+	}
+
+	if (combatInstance.enemy_list.length > 0) {
+		output += ' It is now the enemy turn.';
+		output += enemyTurn(combatInstance.enemy_list);
+
+		// check if player defeated
+		if (playerCharacter.stats.health <= 0) {
+			combatInstance.player_defeated = true;
+			output += ' You have taken lethal damage from the enemy and have been defeated.'
+		}
+	} else {
+		// check if all enemies have been defeated
 		combatInstance.enemy_defeated = true;
 		output += ' You have defeated the enemy successfully.'
 	}
+
+	output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
 
 	return output;
 }
@@ -46,9 +69,21 @@ function createEnemyList(scene) {
     for (var enemyGroup in sceneEnemies) {
     	var groupSize = sceneEnemies[enemyGroup];
     	for (var i = 0; i < groupSize; i++) {
-    		var enemy = {};
-			Object.assign(enemy, enemies.monsters[enemyGroup]);
-			enemy.name = (enemy.name + " " + (i + 1));
+    		var enemy = {
+    			'name': '',
+    			'type': '',
+    			'stats': {
+    				'health': 0,
+    				'damageDieSides': 0
+    			},
+    			'current_state': ''
+    		};
+			// Object.assign(enemy, enemies.monsters[enemyGroup]); // Does not copy nested objects
+			enemy.type = enemies.monsters[enemyGroup].type;
+			enemy.name = enemy.type + " " + (i + 1);
+			enemy.stats.health = enemies.monsters[enemy.type].stats.health;
+			enemy.stats.damageDieSides = enemies.monsters[enemy.type].stats.damageDieSides;
+			enemy.current_state = enemies.monsters[enemyGroup].current_state;
 			enemyList.push(enemy);
     	}
     }
@@ -63,7 +98,7 @@ function enemyTurn(enemyList) {
 	for (var i = 0; i < enemyList.length; i++) {
 		var enemy = enemyList[i];
 		var enemyState = enemy.current_state;
-		var possibleActions = enemy.state_actions[enemyState];
+		var possibleActions = enemies.monsters[enemy.type].state_actions[enemyState];
 		var actionsListLength = Object.keys(possibleActions).length;
 		var randomPercentileRoll = dndLib.rollDice(1, 100);
 		var percentile = 0;
@@ -98,9 +133,9 @@ function enemyActionHandler(action, enemy, playerCharacter) {
 
 			// remove enemy from list if it escaped
 			if (success) {
-				var indexOfEnemy = combatInstance.enemyList.indexOf(enemy);
+				var indexOfEnemy = combatInstance.enemy_list.indexOf(enemy);
 				if (indexOfEnemy > -1) {
-					combatInstance.enemyList.splice(indexOfEnemy, 1);
+					combatInstance.enemy_list.splice(indexOfEnemy, 1);
 				}
 			}
 			break;
@@ -115,8 +150,8 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 	var actionResult = '';
 
 	// choose a random description
-	var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
-	var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
+	var randomActionDescriptionIndex = dndLib.rollDice(1, enemies.monsters[enemy.type].action_descriptions[action].length - 1);
+	var enemyActionDescription = enemies.monsters[enemy.type].action_descriptions[action][randomActionDescriptionIndex];
 
 	// generate a generic action description if there is no description from above
 	if (!enemyActionDescription) {
@@ -139,12 +174,18 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 
 function combatTest() {
 	var playerCharacter = {};
-	Object.assign(playerCharacter, classes.classes.wizard);
+	var playerSkillCheckObject = {
+		'roll' : 16,
+		'pass': true
+	}
+	Object.assign(playerCharacter, classes.classes.warrior);
 
 	exports.initializeCombat('forest', playerCharacter);
-	console.log(exports.combatRound('Player action.'));
-	console.log(exports.combatRound('Player action.'));
-	console.log(exports.combatRound('Player action.'));
+
+	while (!combatInstance.player_defeated && !combatInstance.enemy_defeated) {
+		console.log(exports.combatRound('attack', playerSkillCheckObject, 'You attack.'));
+		//console.log(combatInstance.enemy_list);
+	}
 };
 
-combatTest();
+combatTest(); // DEBUG Remove

@@ -1,7 +1,7 @@
 module.exports = {
 	"monsters": {
 		"orc": {
-			"name": "Orc",
+			"type": "orc",
 			"stats": {
 				"defense": 12,
 				"health": 8,

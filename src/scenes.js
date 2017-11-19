@@ -13,7 +13,7 @@ module.exports = {
             },
             "card": {},
             "enemies": {
-                "orc": 4
+                "orc": 3
             },
             "enemy_not_seen": {
                 "pass": {
