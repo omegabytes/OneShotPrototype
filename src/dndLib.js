@@ -99,12 +99,14 @@ exports.skillCheck = function(DC, bonus) {
     return resultObject;
 };
 
+// deals damage to character, and returns the damage dealt if needed for output purposes
 exports.dealDamage = function(attackingCharacter, hitCharacter) {
-    var hitCharacterDied = false;
-    var damage = exports.rollDice(1, attackingCharacter.damageDieSides);
+    var damage = exports.rollDice(1, attackingCharacter.stats.damageDieSides);
 
-    hitCharacter.health -= damage;
-}
+    hitCharacter.stats.health -= damage;
+
+    return damage;
+};
 
 /**
 * Constructs a response object based on scene, state, skill, and skill check result.

@@ -1,7 +1,11 @@
 var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var enemies = require('./enemies');
+var classes = require('./classes');
 
+//var combatOrder = []; // ignore combat order for now and have player always go first.
+
+// this handler creates and updates a combatInstance which contains all the information about the combat
 var combatInstance = {
 	"enemy_list": [],
 	"player_character": {},
@@ -9,7 +13,9 @@ var combatInstance = {
 	"player_defeated": false
 };
 
-//var combatOrder = []; // ignore combat order for now and have player always go first.
+exports.getCombatInstance = function() {
+	return combatInstance;
+}
 
 // Sets up combat instance
 exports.initializeCombat = function(scene, playerCharacter) {
@@ -18,7 +24,7 @@ exports.initializeCombat = function(scene, playerCharacter) {
 };
 
 exports.combatRound = function(speechInput) {
-	var output = speechInput;
+	var output = speechInput + ' It is now the enemy turn. ';
 
 	output += enemyTurn(combatInstance.enemy_list);
 
@@ -31,7 +37,7 @@ exports.combatRound = function(speechInput) {
 	return output;
 }
 
-exports.createEnemyList = function(scene) {
+function createEnemyList(scene) {
     var enemyList = [];
     var sceneEnemies = scenes.scenes[scene].enemies;
     for (var enemyGroup in sceneEnemies) {
@@ -47,7 +53,7 @@ exports.createEnemyList = function(scene) {
     return enemyList;
 };
 
-function enemyTurn = function(enemyList) {
+function enemyTurn(enemyList) {
 	//compile enemy actions.
 	var enemyActions = "";
 
@@ -62,7 +68,7 @@ function enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				enemyActions += enemyActionHandler(action, enemy, combatInstance.player);
+				enemyActions += enemyActionHandler(action, enemy, combatInstance.player_character) + ' ';
 				break;
 			}
 		}
@@ -71,20 +77,20 @@ function enemyTurn = function(enemyList) {
 	return enemyActions;
 };
 
-function enemyActionHandler(action, enemy, player) {
+function enemyActionHandler(action, enemy, playerCharacter) {
 	var success = false;
 	var description = '';
 	var damage = 0;
 
 	switch (action) {
 		case 'attack':
-			success = dndLib.skillCheck(player.skills.defense, enemy.attack).pass;
+			success = dndLib.skillCheck(playerCharacter.stats.defense, enemy.attack).pass;
 			if (success) {
-				dndLib.dealDamage(enemy, player);
+				damage = dndLib.dealDamage(enemy, playerCharacter);
 			}
 			break;
 		case 'flee':
-			var fleeDC = dndLib.rollDice(1, 20) + player.skills.investigate;
+			var fleeDC = dndLib.rollDice(1, 20) + playerCharacter.stats.investigate;
 			success = dndLib.skillCheck(fleeDC, enemy.attack).pass;
 
 			// remove enemy from list if it escaped
@@ -94,7 +100,7 @@ function enemyActionHandler(action, enemy, player) {
 					combatInstance.enemyList.splice(indexOfEnemy, 1);
 				}
 			}
-		}
+			break;
 	}
 
 	return buildEnemyActionDescription(enemy, action, damage, success);
@@ -115,15 +121,23 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
 	}
 
-	description = (enemy.name + ' ' + enemyActionDescription + ' ');
+	description = (enemy.name + ' ' + enemyActionDescription);
 
 	if (success) {
-		var attackSuccessString = 'and it hit you, dealing' + damage + 'damage.';
-		actionResult = action == 'attack' ? attackSuccessString : 'and it succeeded.';
+		var attackSuccessString = ', it hits, dealing ' + damage + ' damage.';
+		actionResult = action == 'attack' ? attackSuccessString : ' and it succeeds.';
 	} else {
-		actionResult = action == 'attack' ? 'but it missed.' : 'but it failed.'
+		actionResult = action == 'attack' ? ' but it misses.' : ' but it fails.'
 	}
 
 	description += actionResult;
 	return description;
-}
+};
+
+function combatTest() {
+	var playerCharacter = {};
+	Object.assign(playerCharacter, classes.classes.wizard);
+
+	exports.initializeCombat('forest', playerCharacter);
+	console.log(exports.combatRound('Player action.'));
+};

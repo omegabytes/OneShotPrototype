@@ -1,12 +1,12 @@
 module.exports = {
 	"monsters": {
 		"orc": {
-			"name": "orc",
+			"name": "Orc",
 			"stats": {
 				"defense": 12,
 				"health": 8,
 				"attack": 3,
-				"damageDieSides": 8,
+				"damageDieSides": 6,
 				"perception": 0,
 				"stealth": 1
 			},
@@ -29,9 +29,9 @@ module.exports = {
 					"",
 					"swings its club at you",
 					"leaps into the air, bringing its club down upon you",
-					"charges forward and swings wildly",
-					"grabs you by the throat and tries to punch you in the face",
-					"let's out a battle cry and smashes its club down",
+					"charges forward swinging wildly",
+					"grabs you by the throat before it tries to punch you in the face",
+					"let's out a battle cry while swinging its club down hard",
 					"screams something unintelligible before attempting to slam its elbow into your stomach",
 					"laughs as it tries to stomp on your foot"
 				],
