@@ -3,6 +3,18 @@ var langEN = languageStrings.en.translation;
 var characterClasses = require('./classes');
 var scenes = require('./scenes');
 
+const states = {
+    CHAR_SELECT:        '_CHARSELECT',         // Prompts user to select a character, and gives info on character
+    COMBAT:             '_COMBAT',             // User enters combat
+    COMBAT_END:         '_COMBATEND',          // User exits combat with either a success or failure attribute
+    ENDGAME:            '_ENDGAME',            // Resolution message, resets game state to new game
+    ENEMY_SEES_USER:    '_ENEMYSEESUSER',      // Messaging and options if user fails perception/stealth checks, user attacks second
+    FOREST_SCENE:       '_FORESTSCENE',        // The first encounter, where the user is described a situation and asked what to do
+    // NEW_GAME:           '_NEWGAME',            // no current game in progress
+    START_MODE:         '_STARTMODE',          // Beginning of game with menu, start, and help prompts
+    USER_SEES_ENEMY:    '_USERSEESENEMY'       // User passes perception/stealth checks, attacks first
+};
+
 // not found message handler
 exports.notFoundMessage = function(slotName, userInput) {
 	var speechOutput = langEN.NOT_FOUND_MESSAGE;
@@ -111,27 +123,48 @@ exports.dealDamage = function(attackingCharacter, hitCharacter) {
 /**
 * Constructs a response object based on scene, state, skill, and skill check result.
 * @param scene current scene.
-* @param state custom state within a scene such as enemy_seen.
+* @param sceneState custom state within a scene such as enemy_seen.
 * @param skill the skill that was checked.
 * @param roll skill check roll.
 * @param pass boolean, result of skill check.
 * @return object containing response description and state change
 */
-exports.responseBuilder = function (scene, state, skill, roll, pass) {
-    var output = {
-        "description": "",
-        "state_change": ""
-    };
 
+exports.responseBuilder = function (scene, sceneState, skill, roll, pass) {
     var successFail = pass ? "pass" : "fail";
-    var resultObject = scenes.scenes[scene][state][successFail][skill];
+    var output = scenes.scenes[scene][sceneState][successFail][skill];
 
-    if (resultObject.description != "") {
-        output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + resultObject.description;
+    if (output.description) {
+        output.description = "You " + successFail + "ed your " + skill + " check, you rolled a " + roll + ". " + output.description;
     } else {
         // If no description, action is useless
         output.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";
     }
 
-    return output
+    return output;
+};
+
+exports.stateChangeHandler = function (nextState) {
+    var game_state = this.handler.state; //store the existing state in case the argument is a scene state
+
+    switch(nextState){
+        case "combat":
+            game_state = states.COMBAT;
+            break;
+        case "combat_end":
+            game_state = states.COMBAT_END;
+            break;
+        case "end_game":
+            game_state = states.ENDGAME;
+            break;
+        case "forest_scene":
+            game_state = states.FOREST_SCENE;
+            break;
+        case "start_mode":
+            game_state = state.START_MODE;
+            break;
+        default:
+            break;
+
+    }
 };

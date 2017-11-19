@@ -1,6 +1,5 @@
-ContinueJourney continue
+ContinueGameIntent continue
 MoreInfoIntent info
 MoreInfoIntent more info
-PassIntent pass
 UserActionIntent {Action}
 UserClassIntent {Class}

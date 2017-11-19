@@ -1,19 +1,22 @@
 {
 	"intents": [
 		{
+			"intent": "CombatEntryPoint"
+		},
+		{
 			"intent": "ContinueGameIntent"
 		},
 		{
 			"intent": "ContinueJourney"
 		},
 		{
-			"intent": "FailIntent"
+			"intent": "ContinuePoint"
+		},
+		{
+			"intent": "EntryPoint"
 		},
 		{
 			"intent": "MoreInfoIntent"
-		},
-		{
-			"intent": "PassIntent"
 		},
 		{
 			"slots": [
