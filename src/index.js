@@ -242,12 +242,11 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
-        // var playerCharacter = {};
-        // Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
-        // combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
-        // this.attributes['speechOutput'] += ' You have entered combat.';
-        // this.emit(this.attributes['speechOutput']);
-        this.emit(':tell',"combat entry point");
+        var playerCharacter = {};
+        Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
+        combatHandler.initializeCombat(this.attributes['scene'], playerCharacter);
+        this.attributes['speechOutput'] = ' You have entered combat.';
+        this.emit(':tell', this.attributes['speechOutput']);
     },
 
     // Handles user actions
@@ -257,8 +256,6 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         if (actionRequestedByUser === "attack") {
             this.attributes["speechOutput"] = combatHandler.combatRound();
         }
-
-        this.emit(this.attributes["speechOutput"]);
 
         // check for end game conditions
         var endGame = false;
@@ -275,6 +272,8 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         if (endGame) {
             this.handler.state = states.ENDGAME;
             this.emitWithState('EndGameIntent');
+        } else {
+            this.emit(this.attributes["speechOutput"]);
         }
 
     },
