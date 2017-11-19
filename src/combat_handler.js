@@ -62,7 +62,7 @@ function enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				var actionResult = enemyActionHandler(action, enemy, combatInstance.player);
+				enemyActions += enemyActionHandler(action, enemy, combatInstance.player);
 				break;
 			}
 		}
@@ -74,6 +74,7 @@ function enemyTurn = function(enemyList) {
 function enemyActionHandler(action, enemy, player) {
 	var success = false;
 	var description = '';
+	var damage = 0;
 
 	switch (action) {
 		case 'attack':
@@ -96,24 +97,33 @@ function enemyActionHandler(action, enemy, player) {
 		}
 	}
 
-	return descriptionBuilder(action, success);
+	return buildEnemyActionDescription(enemy, action, damage, success);
 };
 
-function descriptionBuilder(action, success) {
+// creates a description of the action, then appends a message such as hit or missed, passed or failed
+function buildEnemyActionDescription(enemy, action, damage, success) {
 	var description = '';
+	var actionResult = '';
 
-	// Function will get description of acction, then append a message such as "and hit you" or "but missed."
+	// choose a random description
+	var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
+	var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
 
-	// var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
-	// var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
+	// generate a generic action description if there is no description from above
+	if (!enemyActionDescription) {
+		randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
+		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
+	}
 
-	// // generate a generic action description if there is no description.
-	// if (!enemyActionDescription) {
-	// 	randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-	// 	enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
-	// }
+	description = (enemy.name + ' ' + enemyActionDescription + ' ');
 
-	// enemyActions += (enemy.name + ' ' + enemyAction + ' ');
+	if (success) {
+		var attackSuccessString = 'and it hit you, dealing' + damage + 'damage.';
+		actionResult = action == 'attack' ? attackSuccessString : 'and it succeeded.';
+	} else {
+		actionResult = action == 'attack' ? 'but it missed.' : 'but it failed.'
+	}
 
+	description += actionResult;
 	return description;
 }
