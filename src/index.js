@@ -45,27 +45,27 @@ const newSessionHandlers = {
             // game initialization
             // FIXME: encapsulate into function
             this.attributes['character'] = '';
-            this.attributes['userDidDefeatEnemy'] = false;
+            this.attributes['userDidDefeatEnemy'] = false; //@gojirra this was initialized two different ways, please use this spelling
             this.attributes['userHealth'] = '';
             this.attributes['sceneState'] = "enemy_not_seen";
 
-
             this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
             this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
+
+            if(this.attributes['priorState'] == 'continueGame'){
+                this.attributes['speechOutput'] = "Okay, I\'ve reset your progress. Let\'s start again. Are you ready to begin?";
+                this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
+            }
+
+            this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
         } else {
             // if the user is returning to an in-progress game
             // ask if they want to continue where they left off or start a new game
             this.attributes['priorState'] = this.attributes['STATE']; // store the prior state so we can jump to continue game handlers
             this.handler.state = states.CONTINUE_GAME;
-
-            this.attributes["speechOutput"] = "Welcome back! Would you like to continue from where you left off, or start a new game?";
-            this.attributes['repromptSpeech'] = "Say continue to pick up where you left off, or say new to start over. Say exit to quit.";
-
-            cardTitle = "Welcome back, " + this.attributes['character'] + "!";
-            cardOutput = this.attributes["speechOutput"] + "\n" + this.attributes['repromptSpeech'];
-            imageObject = dndLib.getClassImages(this.attributes['character']);
+            this.emitWithState('EntryPoint');
         }
-        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
+
     },
     'NewSession': function () {
         this.emit('LaunchRequest');
@@ -78,13 +78,9 @@ const newSessionHandlers = {
         this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
-    // 'AMAZON.YesIntent': function () {
-    //     this.emit('ContinueGameIntent');
-    // },
-    // 'AMAZON.NoIntent': function () {
-    //     this.handler.state = states.START_MODE;
-    //     this.attributes['speechOutput'] = "Okay, I\'ve reset your progress. Let\'s start again.";
-    // },
+    'AMAZON.NoIntent': function () {
+        this.emit(':tell', "no intent in new session");
+    },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = langEN.HELP_MESSAGE;
         this.attributes['repromptSpeech'] = langEN.HELP_REPROMPT;
@@ -112,12 +108,22 @@ const continueHandlers = Alexa.CreateStateHandler(states.CONTINUE_GAME, {
         this.handler.state = this.attributes['priorState'];
         this.emitWithState('EntryPoint');
     },
+    'EntryPoint': function () {
+        this.attributes["speechOutput"] = "Welcome back! Would you like to continue from where you left off, or start a new game?";
+        this.attributes['repromptSpeech'] = "Say continue to pick up where you left off, or say new to start over. Say exit to quit.";
+
+        var cardTitle = "Welcome back, " + this.attributes['character'] + "!";
+        var cardOutput = this.attributes["speechOutput"] + "\n" + this.attributes['repromptSpeech'];
+        var imageObject = dndLib.getClassImages(this.attributes['character']);
+
+        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
+    },
     'AMAZON.YesIntent': function () {
         this.emit('ContinueGameIntent');
     },
     'AMAZON.NoIntent': function () {
         this.handler.state = states.START_MODE;
-        this.attributes['speechOutput'] = "Okay, I\'ve reset your progress. Let\'s start again.";
+        this.emitWithState('EntryPoint');
     },
     'AMAZON.HelpIntent': function () {
         this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
@@ -192,9 +198,8 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     'AMAZON.YesIntent': function () {
         this.handler.state = states.FOREST_SCENE; // we can introduce an intent that asks the user where they want to begin later
         this.attributes['userHealth'] = dndLib.getStat(this.attributes['character'], 'health'); // sets the health of the user
+        this.attributes['priorState'] = 'charSelect';
         this.attributes['gameInProgress'] = true;
-
-        this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins! ";
 
         this.emitWithState('EntryPoint');
     },
@@ -204,9 +209,13 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     },
     'AMAZON.HelpIntent': function () {
         // use char select specific help messages here
-        this.attributes['speechOutput'] = langEN.HELP_MESSAGE;
-        this.attributes['repromptSpeech'] = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        this.attributes['speechOutput'] = "Say the name of the class, or say more info.";
+        this.attributes['repromptSpeech'] = "See the card in the Alexa skill for what you can say.";
+
+        var cardTitle = "Character Select: Help";
+        var cardOutput = "Say:\nwizard\nwarrior\nrogue\nmore info";
+
+        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,cardOutput);
     },
     'AMAZON.RepeatIntent': function () {
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
@@ -289,7 +298,7 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
-    'EndGameIntent' : function () {
+    'EndGameIntent' : function () { //FIXME: ask the user if they want to play again
         this.attributes["gameInProgress"] = false;
         if (this.attributes['userDidDefeatEnemy']){
             this.attributes['speechOutput'] = ' You won. Thanks for playing!';
@@ -332,12 +341,18 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
     // start here, prompt user for next action
     'EntryPoint': function () {
         var cardTitle = "You find yourself in a forest";
-        var cardOutput = this.attributes['speechOutput']+ " "+ "What do you do?";
+        var cardOutput = langEN.LIST_OF_ACTIONS;
         var imageObject = { //FIXME: image not displaying
             "imageSmall": "https://s3.amazonaws.com/oneshotimages/forest3.jpg",
             "imageLarge": "https://s3.amazonaws.com/oneshotimages/forest3.jpg"
         };
-        this.attributes['speechOutput'] += scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt;
+
+        this.attributes['speechOutput'] = scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt;
+
+        if (this.attributes['priorState'] == "charSelect"){
+            this.attributes['speechOutput'] = "You chose the " + this.attributes['character'] + ". Your adventure begins! " + scenes.scenes.forest.description + " " + scenes.scenes.forest.prompt;;
+        }
+
         this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
     },
 
@@ -348,8 +363,9 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
-        // var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
         var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
+        var cardTitle;
+        var cardOutput;
 
         this.attributes["speechOutput"] = response.description;
 
@@ -376,7 +392,10 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
             if(response.scene_state_change != "lose") {
                 this.attributes["speechOutput"] +=  scenes.scenes.forest.prompt;
             }
-            this.emit(':ask',this.attributes["speechOutput"], this.attributes['repromptSpeech']);
+
+            cardTitle = "You " + actionRequestedByUser;
+            cardOutput = his.attributes["speechOutput"];
+            this.emit(':askWithCard',this.attributes["speechOutput"], this.attributes['repromptSpeech'],cardTitle,cardOutput);
         }
     },
     'AMAZON.YesIntent': function () {
@@ -390,9 +409,11 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         this.emit(':tell', this.attributes['speechOutput']);
     },
     'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = "HELP: " + this.handler.state; //FIXME: replace with correct messaging
-        this.attributes['repromptSpeech'] = "REPROMPT_GLOBAL: " + this.handler.state; //FIXME: replace with correct messaging
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        this.attributes['speechOutput'] = "Say an action to advance the game. See the card in the Alexa app for a list of actions.";
+        this.attributes['repromptSpeech'] = "See the card in the Alexa app for a list of actions. Say exit to quit";
+        var cardTitle = "Forest: Help";
+        var cardOutput = langEN.LIST_OF_ACTIONS;
+        this.emit(':askWithcard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,cardOutput);
     },
     'AMAZON.RepeatIntent': function () {
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
@@ -418,6 +439,11 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
+    'EntryPoint': function () {
+        this.attributes['gameInProgress'] = false;
+        this.attributes['priorState'] = 'continueGame';
+        this.emit(':ask', "okay, I've reset the game. Are you ready to being?");
+    },
 
     'AMAZON.YesIntent': function () {
         this.handler.state = states.CHAR_SELECT;
@@ -427,21 +453,24 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
         this.attributes['repromptSpeech'] = 'Say wizard, rogue, or warrior to choose a class, or say exit to quit';
 
         var cardTitle = "Character Select";
+        var cardOutput = this.attributes['repromptSpeech'];
         var imageObject = {
             smallImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg",
             largeImageUrl : "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg"
         };
 
-        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,this.attributes['repromptSpeech'],imageObject);
+        this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
     },
     'AMAZON.NoIntent': function () {
         this.attributes['speechOutput'] = "Thanks for playing!";
         this.emit(':tell', this.attributes['speechOutput']);
     },
     'AMAZON.HelpIntent': function () {
-        this.attributes['speechOutput'] = langEN.HELP_MESSAGE;
-        this.attributes['repromptSpeech'] = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
+        var cardTitle = "New Game: Help";
+        var cardOutput = "say:\n wizard \n warrior \n rogue";
+        this.attributes['speechOutput'] = "This game is prototype adventure game platform. You will choose a character and then make a series of choices that will advance the game until you win or lose. If you get stuck at any point, ask for help. Check the Alexa app on your phone for a list of actions you can take.";
+        this.attributes['repromptSpeech'] = "Say wizard, warrior, or rogue, or ask for help.";
+        this.emit(':askwithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,cardOutput);
     },
     'AMAZON.RepeatIntent': function () {
         this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
