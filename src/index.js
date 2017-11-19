@@ -242,12 +242,11 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
-        // var playerCharacter = {};
-        // Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
-        // combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
-        // this.attributes['speechOutput'] += ' You have entered combat.';
-        // this.emit(this.attributes['speechOutput']);
-        this.emit(':tell',"combat entry point");
+        var playerCharacter = {};
+        Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
+        combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
+        this.attributes['speechOutput'] += ' You have entered combat.';
+        this.emit(':ask',this.attributes['speechOutput']);
     },
 
     // Handles user actions

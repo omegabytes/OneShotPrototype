@@ -15,7 +15,7 @@ var combatInstance = {
 
 exports.getCombatInstance = function() {
 	return combatInstance;
-}
+};
 
 // Sets up combat instance
 exports.initializeCombat = function(scene, playerCharacter) {
@@ -39,7 +39,7 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 
 	// check if the first enemy is dead
 	if (firstEnemy.stats.health <= 0) {
-		output += ' ' + firstEnemy.name + ' has been defeated.'
+		output += ' ' + firstEnemy.name + ' has been defeated.';
 		// remove the enemy from the enemy list
 		combatInstance.enemy_list.splice(0, 1);
 	}
@@ -51,24 +51,24 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 		// check if player defeated
 		if (playerCharacter.stats.health <= 0) {
 			combatInstance.player_defeated = true;
-			output += ' You have taken lethal damage from the enemy and have been defeated.'
+			output += ' You have taken lethal damage from the enemy and have been defeated.';
 		} else {
 			output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
 		}
 	} else {
 		// check if all enemies have been defeated
 		combatInstance.enemy_defeated = true;
-		output += ' You have defeated the enemy successfully.'
+		output += ' You have defeated the enemy successfully.';
 	}
 
 	return output;
-}
+};
 
 function createEnemyList(scene) {
     var enemyList = [];
     var sceneEnemies = scenes.scenes[scene].enemies;
     for (var enemyGroup in sceneEnemies) {
-    	var groupSize = sceneEnemies[enemyGroup];
+    	var groupSize = sceneEnemies[enemyGroup]; //FIXME: does this need hasOwnProperty() check?
     	for (var i = 0; i < groupSize; i++) {
     		var enemy = {
     			'name': '',
@@ -80,17 +80,17 @@ function createEnemyList(scene) {
     			'current_state': ''
     		};
 			// Object.assign(enemy, enemies.monsters[enemyGroup]); // Does not copy nested objects
-			enemy.type = enemies.monsters[enemyGroup].type;
+			enemy.type = enemies.monsters[enemyGroup].type; //FIXME: does this need hasOwnProperty() check?
 			enemy.name = enemy.type + " " + (i + 1);
 			enemy.stats.health = enemies.monsters[enemy.type].stats.health;
 			enemy.stats.damageDieSides = enemies.monsters[enemy.type].stats.damageDieSides;
-			enemy.current_state = enemies.monsters[enemyGroup].current_state;
+			enemy.current_state = enemies.monsters[enemyGroup].current_state; //FIXME: does this need hasOwnProperty() check?
 			enemyList.push(enemy);
     	}
     }
 
     return enemyList;
-};
+}
 
 function enemyTurn(enemyList) {
 	//compile enemy actions.
@@ -100,21 +100,21 @@ function enemyTurn(enemyList) {
 		var enemy = enemyList[i];
 		var enemyState = enemy.current_state;
 		var possibleActions = enemies.monsters[enemy.type].state_actions[enemyState];
-		var actionsListLength = Object.keys(possibleActions).length;
+		var actionsListLength = Object.keys(possibleActions).length; //FIXME: unused
 		var randomPercentileRoll = dndLib.rollDice(1, 100);
 		var percentile = 0;
 
 		for (var action in possibleActions) {
-			percentile += possibleActions[action];
+			percentile += possibleActions[action]; //FIXME: does this need hasOwnProperty() check?
 			if (randomPercentileRoll <= percentile) {
-				enemyActions += enemyActionHandler(action, enemy, combatInstance.player_character);
+				enemyActions += enemyActionHandler(action, enemy, combatInstance.player_character); //FIXME: does this need hasOwnProperty() check?
 				break;
 			}
 		}
 	}
 
 	return enemyActions;
-};
+}
 
 function updateEnemyStatus(enemy) {
 	if (enemy.stats.health <= (enemies.monsters[enemy.type].stats.health / 2) && enemy.current_state === 'normal') {
@@ -128,7 +128,7 @@ function updateEnemyStatus(enemy) {
 
 function enemyActionHandler(action, enemy, playerCharacter) {
 	var success = false;
-	var description = '';
+	var description = ''; //FIXME: unused
 	var damage = 0;
 
 	switch (action) {
@@ -153,11 +153,11 @@ function enemyActionHandler(action, enemy, playerCharacter) {
 	}
 
 	return buildEnemyActionDescription(enemy, action, damage, success);
-};
+}
 
 // creates a description of the action, then appends a message such as hit or missed, passed or failed
 function buildEnemyActionDescription(enemy, action, damage, success) {
-	var description = '';
+	var description = ''; //FIXME: unused
 	var actionResult = '';
 
 	// choose a random description
@@ -166,8 +166,8 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 
 	// generate a generic action description if there is no description from above
 	if (!enemyActionDescription) {
-		randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
+		randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length); //FIXME: unused
+		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction]; //FIXME: undeclared
 	}
 
 	description = (' ' + enemy.name + ' ' + enemyActionDescription);
@@ -181,14 +181,14 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 
 	description += actionResult;
 	return description;
-};
+}
 
 function combatTest() {
 	var playerCharacter = {};
 	var playerSkillCheckObject = {
 		'roll' : 16,
 		'pass': true
-	}
+	};
 	Object.assign(playerCharacter, classes.classes.wizard);
 
 	exports.initializeCombat('forest', playerCharacter);
@@ -197,4 +197,4 @@ function combatTest() {
 		console.log(exports.combatRound('attack', playerSkillCheckObject, 'You attack.'));
 		//console.log(combatInstance.enemy_list);
 	}
-};
+}
