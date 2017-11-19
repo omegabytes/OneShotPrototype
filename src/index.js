@@ -242,11 +242,12 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
-        var playerCharacter = {};
-        Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
-        combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
-        this.attributes['speechOutput'] += ' You have entered combat.';
-        this.emit(this.attributes['speechOutput']);
+        // var playerCharacter = {};
+        // Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
+        // combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
+        // this.attributes['speechOutput'] += ' You have entered combat.';
+        // this.emit(this.attributes['speechOutput']);
+        this.emit(':tell',"combat entry point");
     },
 
     // Handles user actions
@@ -261,7 +262,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
         // check for end game conditions
         var endGame = false;
-        var combatInstance = combatHandler.getCombatInstance;
+        var combatInstance = combatHandler.getCombatInstance();
 
         if (combatInstance.enemy_defeated) {
             this.attributes['userDidDefeatEnemy'] = true;
@@ -386,7 +387,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var character = this.attributes["character"];
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
         var skillCheckObject = dndLib.skillCheck(scenes.scenes.forest.difficulty_classes[actionRequestedByUser],dndLib.getStat(character,actionRequestedByUser)); // returns object
-        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,skillCheckObject.pass);
+        var response = dndLib.responseBuilder("forest",this.attributes["sceneState"],actionRequestedByUser,skillCheckObject.roll,false);
         var cardTitle;
         var cardOutput;
 
@@ -394,14 +395,12 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
 
         // check if the game state needs to change
         if(response.state_change){
-            // if combat TODO: set up combat
-            if(response.state_change == "combat"){
-                this.attributes["speechOutput"] = response.description;
-                this.handler.state =states.COMBAT;
+            if(response.state_change === "combat"){
+                this.handler.state = states.COMBAT;
                 this.emitWithState('CombatEntryPoint');
             }
             // if end_game, transition to endgame
-            if(response.state_change == "end_game"){
+            if(response.state_change === "end_game"){
                 this.handler.state = states.ENDGAME;
                 this.emitWithState('EndGameIntent');
             }
