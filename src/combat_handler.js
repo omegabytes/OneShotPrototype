@@ -100,6 +100,9 @@ function enemyActionHandler(action, enemy, player) {
 };
 
 function descriptionBuilder(action, success) {
+	var description = '';
+
+	// Function will get description of acction, then append a message such as "and hit you" or "but missed."
 
 	// var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
 	// var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
@@ -111,4 +114,6 @@ function descriptionBuilder(action, success) {
 	// }
 
 	// enemyActions += (enemy.name + ' ' + enemyAction + ' ');
+
+	return description;
 }
