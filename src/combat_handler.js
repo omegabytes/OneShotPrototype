@@ -62,18 +62,7 @@ function enemyTurn = function(enemyList) {
 		for (var action in possibleActions) {
 			percentile += possibleActions[action];
 			if (randomPercentileRoll <= percentile) {
-				actionHandler(action);
-
-				var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
-				var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
-
-				// generate a generic action description if there is no description.
-				if (!enemyActionDescription) {
-					randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-					enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
-				}
-
-				enemyActions += (enemy.name + ' ' + enemyAction + ' ');
+				var actionResult = enemyActionHandler(action, enemy, combatInstance.player);
 				break;
 			}
 		}
@@ -82,13 +71,44 @@ function enemyTurn = function(enemyList) {
 	return enemyActions;
 };
 
-function actionHandler(action, character, target) {
+function enemyActionHandler(action, enemy, player) {
+	var success = false;
+	var description = '';
+
 	switch (action) {
-		case 'attack': {
-			var resultObject = dndLib.skillCheck(target.defense, character.attack);
-			if (resultObject.pass) {
-				dndLib.dealDamage(character, target);
+		case 'attack':
+			success = dndLib.skillCheck(player.skills.defense, enemy.attack).pass;
+			if (success) {
+				dndLib.dealDamage(enemy, player);
+			}
+			break;
+		case 'flee':
+			var fleeDC = dndLib.rollDice(1, 20) + player.skills.investigate;
+			success = dndLib.skillCheck(fleeDC, enemy.attack).pass;
+
+			// remove enemy from list if it escaped
+			if (success) {
+				var indexOfEnemy = combatInstance.enemyList.indexOf(enemy);
+				if (indexOfEnemy > -1) {
+					combatInstance.enemyList.splice(indexOfEnemy, 1);
+				}
 			}
 		}
 	}
+
+	return descriptionBuilder(action, success);
 };
+
+function descriptionBuilder(action, success) {
+
+	// var randomActionDescriptionIndex = dndLib.rollDice(1, enemy.action_descriptions[action].length - 1);
+	// var enemyActionDescription = enemy.action_descriptions[action][randomActionDescriptionIndex];
+
+	// // generate a generic action description if there is no description.
+	// if (!enemyActionDescription) {
+	// 	randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
+	// 	enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
+	// }
+
+	// enemyActions += (enemy.name + ' ' + enemyAction + ' ');
+}

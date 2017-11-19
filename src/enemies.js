@@ -27,13 +27,13 @@ module.exports = {
 			"action_descriptions": {
 				"attack": [
 					"",
-					"swings its club at you and hits.",
-					"leaps into the air, bringing its club down upon your head.",
-					"charges forward and swings wildly, bashing you with its club.",
-					"grabs you by the throat and punches you in the face.",
-					"let's out a battle cry before landing a blow with its heavy club.",
-					"screams something unintelligible before slamming its elbow into your stomach.",
-					"stomps on your foot and laughs."
+					"swings its club at you",
+					"leaps into the air, bringing its club down upon you",
+					"charges forward and swings wildly",
+					"grabs you by the throat and tries to punch you in the face",
+					"let's out a battle cry and smashes its club down",
+					"screams something unintelligible before attempting to slam its elbow into your stomach",
+					"laughs as it tries to stomp on your foot"
 				],
 				"flee": [
 					""
@@ -43,16 +43,16 @@ module.exports = {
 	},
 	"generic_action_descriptions": {
 		"attack": [
-			"swings wildly and hits you.",
-			"brings an attack down upon your head.",
-			"bashes you viciously.",
-			"thrashes savagely and hits you.",
-			"hits you with a rapid blow.",
-			"lunges forward and lands an attack on you.",
+			"swings wildly",
+			"brings an attack down upon your head",
+			"attempts to bash you viciously",
+			"thrashes savagely",
+			"attempts to hit you with a quick strike",
+			"lunges forward",
 		],
 		"flee": [
-			"runs away in terror",
-			"flees from combat clutching it's wounds"
+			"attempts to flee in terror",
+			"attempts to run away, clutching it's wounds"
 		]
 	}
 }
