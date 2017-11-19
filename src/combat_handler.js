@@ -32,6 +32,7 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 	if (playerAction === 'attack') {
 		if (playerSkillCheckObject.pass) {
 			var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
+			updateEnemyStatus(firstEnemy);
 			output += ' You hit ' + firstEnemy.name + ' for ' + damage + ' damage.';
 		}
 	}
@@ -51,14 +52,14 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 		if (playerCharacter.stats.health <= 0) {
 			combatInstance.player_defeated = true;
 			output += ' You have taken lethal damage from the enemy and have been defeated.'
+		} else {
+			output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
 		}
 	} else {
 		// check if all enemies have been defeated
 		combatInstance.enemy_defeated = true;
 		output += ' You have defeated the enemy successfully.'
 	}
-
-	output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
 
 	return output;
 }
@@ -114,6 +115,16 @@ function enemyTurn(enemyList) {
 
 	return enemyActions;
 };
+
+function updateEnemyStatus(enemy) {
+	if (enemy.stats.health <= (enemies.monsters[enemy.type].stats.health / 2) && enemy.current_state === 'normal') {
+		enemy.current_state = 'injured';
+	} else if (enemy.stats.health <= (enemies.monsters[enemy.type].stats.health / 3) && enemy.current_state !== 'near_death') {
+		enemy.current_state = 'near_death';
+	}
+	console.log(enemy.name + ' is ' + enemy.current_state);
+
+}
 
 function enemyActionHandler(action, enemy, playerCharacter) {
 	var success = false;
@@ -178,7 +189,7 @@ function combatTest() {
 		'roll' : 16,
 		'pass': true
 	}
-	Object.assign(playerCharacter, classes.classes.warrior);
+	Object.assign(playerCharacter, classes.classes.wizard);
 
 	exports.initializeCombat('forest', playerCharacter);
 
@@ -187,5 +198,3 @@ function combatTest() {
 		//console.log(combatInstance.enemy_list);
 	}
 };
-
-combatTest(); // DEBUG Remove
