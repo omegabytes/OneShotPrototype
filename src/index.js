@@ -49,6 +49,7 @@ const newSessionHandlers = {
             this.attributes['userDidDefeatEnemy'] = false; //@gojirra this was initialized two different ways, please use this spelling
             this.attributes['userHealth'] = '';
             this.attributes['sceneState'] = "enemy_not_seen";
+            this.attributes['scene'] = "";
 
             this.attributes['speechOutput'] =  langEN.WELCOME_MESSAGE;
             this.attributes['repromptSpeech'] = langEN.WELCOME_REPROMPT;
@@ -242,18 +243,40 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     'NewSession': function () {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
-    'CombatEntryPoint': function () { //FIXME: implement combat routine
-      this.attributes['speechOutput'] += " The combat scene would be here. Say yes to win or no to lose.";
-      this.emit(':ask', this.attributes['speechOutput']);
+    'CombatEntryPoint': function () {
+        var playerCharacterObject = {};
+        Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
+        combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
+        this.attributes['speechOutput'] += ' You have entered combat.';
+        this.emit(this.attributes['speechOutput']);
     },
 
     // Handles user actions
     'UserActionIntent' : function () {
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
-        var action;
 
-        this.attributes["speechOutput"] = action;
-        this.emit(this.attributes["speechOutput"]); //FIXME: implement correct emit statement
+        if (actionRequestedByUser === "attack") {
+            this.attributes["speechOutput"] = combatHandler.combatRound();
+        }
+
+        this.emit(this.attributes["speechOutput"]);
+
+        // check for end game conditions
+        var endGame = false;
+        var combatInstance = combatHandler.getCombatInstance;
+
+        if (combatInstance.enemy_defeated) {
+            this.attributes['userDidDefeatEnemy'] = true;
+            endGame = true;
+        } else if (combatInstance.player_defeated) {
+            this.attributes['userDidDefeatEnemy'] = false;
+            endGame = true;
+        }
+
+        if (endGame) {
+            this.handler.state = states.ENDGAME;
+            this.emitWithState('EndGameIntent');
+        }
 
     },
 
@@ -341,6 +364,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
 
     // start here, prompt user for next action
     'EntryPoint': function () {
+        this.attributes['scene'] = 'forest';
         var cardTitle = "You find yourself in a forest";
         var cardOutput = langEN.LIST_OF_ACTIONS;
         var imageObject = { //FIXME: image not displaying
