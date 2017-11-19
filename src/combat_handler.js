@@ -28,10 +28,13 @@ exports.combatRound = function(speechInput) {
 
 	output += enemyTurn(combatInstance.enemy_list);
 
-	if (combatInstance.player_character.health <= 0) {
+	// check for end combat scenarios.
+	if (combatInstance.player_character.stats.health <= 0) {
 		combatInstance.player_defeated = true;
+		output += ' You have taken lethal damage from the enemy. You have died.'
 	} else if (combatInstance.enemy_list.length == 0) {
 		combatInstance.enemy_defeated = true;
+		output += ' You have defeated the enemy successfully.'
 	}
 
 	return output;
