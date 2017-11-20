@@ -242,6 +242,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
+        this.attributes['sceneState'] = 'enemy_seen';
         var playerCharacter = {};
         Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
         combatHandler.initializeCombat(this.attributes['scene'], playerCharacter);
@@ -253,37 +254,50 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
     // Handles user actions
     'UserActionIntent' : function () {
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
-        var cardTitle = actionRequestedByUser;
-        var cardOutput = 'Hello';
+        var cardTitle = 'Combat'
+        var cardOutput = actionRequestedByUser;
         var imageObject = dndLib.getClassImages(this.attributes['character']);
+        var currentScene = this.attributes['scene'];
+        var combatInstance = combatHandler.getCombatInstance();
+        var output = '';
 
-        this.attributes['speechOutput'] = 'User action intent, ' + actionRequestedByUser;
-        // if (actionRequestedByUser === "attack") {
-        //     this.attributes["speechOutput"] = combatHandler.combatRound();
-        // }
+        if (actionRequestedByUser === "attack") {
+            //output = 'User said attack'; 
+            var DC = enemies.monsters[combatInstance.enemy_list[0].type].stats.defense;
+            var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(this.attributes['character'], actionRequestedByUser)); // returns object
+            var responseObject = dndLib.responseBuilder(currentScene, this.attributes['sceneState'], 'attack', skillCheckObject.roll, skillCheckObject.pass);
+            var output = combatHandler.combatRound('attack', skillCheckObject, responseObject.description);
+        } else {
+            output = 'User did not say attack';
+            // DC = scenes.scenes[currentScene].difficulty_classes[actionRequestedByUser];
+            // var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(character, actionRequestedByUser)); // returns object
+            // var response = dndLib.responseBuilder("forest", this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
+            // var output = response.description;
+        }
 
-        // // check for end game conditions
-        // var endGame = false;
-        // var combatInstance = combatHandler.getCombatInstance();
+        this.attributes["speechOutput"] = output + ' What do you do?';
 
-        // if (combatInstance.enemy_defeated) {
-        //     this.attributes['userDidDefeatEnemy'] = true;
-        //     endGame = true;
-        // } else if (combatInstance.player_defeated) {
-        //     this.attributes['userDidDefeatEnemy'] = false;
-        //     endGame = true;
-        // }
+        // check for end game conditions
+        var endGame = false;
+        /*
+        var combatInstance = combatHandler.getCombatInstance();
 
-        // if (endGame) {
-        //     this.handler.state = states.ENDGAME;
-        //     this.emitWithState('EndGameIntent');
-        // }
+        if (combatInstance.enemy_defeated) {
+            this.attributes['userDidDefeatEnemy'] = true;
+            endGame = true;
+        } else if (combatInstance.player_defeated) {
+            this.attributes['userDidDefeatEnemy'] = false;
+            endGame = true;
+        }
+        */
 
-        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
-        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
-        this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
-
-
+        if (endGame) {
+            this.handler.state = states.ENDGAME;
+            this.emitWithState('EndGameIntent');
+        } else {
+            this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
+            this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'], cardTitle, cardOutput, imageObject);
+        }
     },
 
     'AMAZON.YesIntent': function () {

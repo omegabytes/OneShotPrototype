@@ -86,6 +86,7 @@ exports.getClassImages = function (className) {
 */
 
 exports.skillCheck = function(DC, bonus) {
+    DC = DC || 0;
     bonus = bonus || 0;
     var resultObject = {
         "roll": 0,
