@@ -259,10 +259,9 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         var cardOutput = actionRequestedByUser;
         var imageObject = dndLib.getClassImages(this.attributes['character']);
         var currentScene = this.attributes['scene'];
-        var combatInstance = combatHandler.getCombatInstance();
 
         if (actionRequestedByUser === "attack") {
-            var DC = enemies.monsters[combatInstance.enemy_list[0].type].stats.defense;
+            var DC = enemies.monsters[combatHandler.getCombatInstance().enemy_list[0].type].stats.defense;
         } else {
             var DC = scenes.scenes[currentScene].difficulty_classes[actionRequestedByUser];
         }
@@ -272,7 +271,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
 
         // check for end game conditions
         var endGame = false;
-
+        var combatInstance = combatHandler.getCombatInstance();
         if (combatInstance.enemy_defeated) {
             this.attributes['userDidDefeatEnemy'] = true;
             endGame = true;
