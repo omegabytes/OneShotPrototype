@@ -37,7 +37,7 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 			if (playerSkillCheckObject.pass) {
 				var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
 				updateEnemyStatus(firstEnemy);
-				output += ' You hit ' + firstEnemy.name + ' for ' + damage + ' damage.';
+				output += 'You dealt ' + damage + ' damage to ' + firstEnemy.name + '.';
 			}
 		}
 
@@ -65,7 +65,6 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 			output += ' You have defeated the enemy successfully.'
 		}
 	}
-	
 
 	return output;
 }

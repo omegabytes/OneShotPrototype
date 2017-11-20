@@ -243,7 +243,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
-        this.attributes['sceneState'] = 'enemy_seen';
+        this.attributes['sceneState'] = 'combat';
         var playerCharacter = {};
         Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
         combatHandler.initializeCombat(this.attributes['scene'], playerCharacter);
@@ -259,14 +259,15 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         var cardOutput = actionRequestedByUser;
         var imageObject = dndLib.getClassImages(this.attributes['character']);
         var currentScene = this.attributes['scene'];
+        var output = {};
 
-        if (actionRequestedByUser === "attack") {
+        if (actionRequestedByUser === 'attack') {
             var DC = enemies.monsters[combatHandler.getCombatInstance().enemy_list[0].type].stats.defense;
         } else {
             var DC = scenes.scenes[currentScene].difficulty_classes[actionRequestedByUser];
         }
         var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(this.attributes['character'], actionRequestedByUser)); // returns object
-        var output = dndLib.responseBuilder(currentScene, this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
+        output = dndLib.responseBuilder(currentScene, this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
         this.attributes["speechOutput"] = combatHandler.combatRound('attack', skillCheckObject, output.description) + ' What do you do?';
 
         // check for end game conditions
