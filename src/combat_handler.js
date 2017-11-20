@@ -28,37 +28,42 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 	var playerCharacter = combatInstance.player_character;
 	var firstEnemy = combatInstance.enemy_list[0];
 
-	// resolve player attack
-	if (playerAction === 'attack') {
-		if (playerSkillCheckObject.pass) {
-			var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
-			updateEnemyStatus(firstEnemy);
-			output += ' You hit ' + firstEnemy.name + ' for ' + damage + ' damage.';
-		}
-	}
-
-	// check if the first enemy is dead
-	if (firstEnemy.stats.health <= 0) {
-		output += ' ' + firstEnemy.name + ' has been defeated.'
-		// remove the enemy from the enemy list
-		combatInstance.enemy_list.splice(0, 1);
-	}
-
-	if (combatInstance.enemy_list.length > 0) {
-		output += ' It is now the enemy turn.';
-		output += enemyTurn(combatInstance.enemy_list);
-
-		// check if player defeated
-		if (playerCharacter.stats.health <= 0) {
-			combatInstance.player_defeated = true;
-			output += ' You have taken lethal damage from the enemy and have been defeated.'
-		} else {
-			output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
-		}
+	// check for flee
+	if (playerAction === 'flee' && playerSkillCheckObject.pass) {
+		combatInstance.player_defeated = true;
 	} else {
-		// check if all enemies have been defeated
-		combatInstance.enemy_defeated = true;
-		output += ' You have defeated the enemy successfully.'
+		// resolve player attack
+		if (playerAction === 'attack') {
+			if (playerSkillCheckObject.pass) {
+				var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
+				updateEnemyStatus(firstEnemy);
+				output += 'You dealt ' + damage + ' damage to ' + firstEnemy.name + '.';
+			}
+		}
+
+		// check if the first enemy is dead
+		if (firstEnemy.stats.health <= 0) {
+			output += ' ' + firstEnemy.name + ' has been defeated.'
+			// remove the enemy from the enemy list
+			combatInstance.enemy_list.splice(0, 1);
+		}
+
+		if (combatInstance.enemy_list.length > 0) {
+			output += ' It is now the enemy turn.';
+			output += enemyTurn(combatInstance.enemy_list);
+
+			// check if player defeated
+			if (playerCharacter.stats.health <= 0) {
+				combatInstance.player_defeated = true;
+				output += ' You have taken lethal damage from the enemy and have been defeated.'
+			} else {
+				output += ' You have ' + playerCharacter.stats.health + ' health remaining.';
+			}
+		} else {
+			// check if all enemies have been defeated
+			combatInstance.enemy_defeated = true;
+			output += ' You have defeated the enemy successfully.'
+		}
 	}
 
 	return output;
