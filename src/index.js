@@ -242,40 +242,42 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         this.emit('LaunchRequest'); // uses the handler in newSessionHandlers
     },
     'CombatEntryPoint': function () {
-        // var playerCharacter = {};
-        // Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
-        // combatHandler.initializeCombat(playerCharacter, this.attributes['scene']);
-        // this.attributes['speechOutput'] += ' You have entered combat.';
-        // this.emit(this.attributes['speechOutput']);
-        this.emit(':tell',"combat entry point");
+        var playerCharacter = {};
+        Object.assign(playerCharacter, classes.classes[this.attributes['character']]);
+        combatHandler.initializeCombat(this.attributes['scene'], playerCharacter);
+        this.attributes['speechOutput'] += ' You have entered combat. What would you like to do?';
+        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
+        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
     },
 
     // Handles user actions
     'UserActionIntent' : function () {
         var actionRequestedByUser = dndLib.validateAndSetSlot(this.event.request.intent.slots.Action); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
 
-        if (actionRequestedByUser === "attack") {
-            this.attributes["speechOutput"] = combatHandler.combatRound();
-        }
+        this.attributes['speechOutput'] = 'User action intent, ' + actionRequestedByUser;
+        // if (actionRequestedByUser === "attack") {
+        //     this.attributes["speechOutput"] = combatHandler.combatRound();
+        // }
 
-        this.emit(this.attributes["speechOutput"]);
+        // // check for end game conditions
+        // var endGame = false;
+        // var combatInstance = combatHandler.getCombatInstance();
 
-        // check for end game conditions
-        var endGame = false;
-        var combatInstance = combatHandler.getCombatInstance();
+        // if (combatInstance.enemy_defeated) {
+        //     this.attributes['userDidDefeatEnemy'] = true;
+        //     endGame = true;
+        // } else if (combatInstance.player_defeated) {
+        //     this.attributes['userDidDefeatEnemy'] = false;
+        //     endGame = true;
+        // }
 
-        if (combatInstance.enemy_defeated) {
-            this.attributes['userDidDefeatEnemy'] = true;
-            endGame = true;
-        } else if (combatInstance.player_defeated) {
-            this.attributes['userDidDefeatEnemy'] = false;
-            endGame = true;
-        }
+        // if (endGame) {
+        //     this.handler.state = states.ENDGAME;
+        //     this.emitWithState('EndGameIntent');
+        // }
 
-        if (endGame) {
-            this.handler.state = states.ENDGAME;
-            this.emitWithState('EndGameIntent');
-        }
+        this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
+        this.emit(':ask', this.attributes['speechOutput'], this.attributes['repromptSpeech']);
 
     },
 
