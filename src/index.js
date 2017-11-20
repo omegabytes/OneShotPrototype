@@ -7,6 +7,7 @@ var dndLib = require('./dndLib.js');
 var scenes = require('./scenes');
 var classes = require('./classes');
 var combatHandler = require('./combat_handler');
+var enemies = require('./enemies');
 const APPID = require('./appID');
 
 exports.handler = function(event,context,callback) {
@@ -259,28 +260,18 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         var imageObject = dndLib.getClassImages(this.attributes['character']);
         var currentScene = this.attributes['scene'];
         var combatInstance = combatHandler.getCombatInstance();
-        var output = '';
 
         if (actionRequestedByUser === "attack") {
-            //output = 'User said attack'; 
             var DC = enemies.monsters[combatInstance.enemy_list[0].type].stats.defense;
-            var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(this.attributes['character'], actionRequestedByUser)); // returns object
-            var responseObject = dndLib.responseBuilder(currentScene, this.attributes['sceneState'], 'attack', skillCheckObject.roll, skillCheckObject.pass);
-            var output = combatHandler.combatRound('attack', skillCheckObject, responseObject.description);
         } else {
-            output = 'User did not say attack';
-            // DC = scenes.scenes[currentScene].difficulty_classes[actionRequestedByUser];
-            // var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(character, actionRequestedByUser)); // returns object
-            // var response = dndLib.responseBuilder("forest", this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
-            // var output = response.description;
+            var DC = scenes.scenes[currentScene].difficulty_classes[actionRequestedByUser];
         }
-
-        this.attributes["speechOutput"] = output + ' What do you do?';
+        var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(this.attributes['character'], actionRequestedByUser)); // returns object
+        var output = dndLib.responseBuilder(currentScene, this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
+        this.attributes["speechOutput"] = combatHandler.combatRound('attack', skillCheckObject, output.description) + ' What do you do?';
 
         // check for end game conditions
         var endGame = false;
-        /*
-        var combatInstance = combatHandler.getCombatInstance();
 
         if (combatInstance.enemy_defeated) {
             this.attributes['userDidDefeatEnemy'] = true;
@@ -289,7 +280,6 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
             this.attributes['userDidDefeatEnemy'] = false;
             endGame = true;
         }
-        */
 
         if (endGame) {
             this.handler.state = states.ENDGAME;
@@ -485,7 +475,7 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     'EntryPoint': function () {
         this.attributes['gameInProgress'] = false;
         this.attributes['priorState'] = 'continueGame';
-        this.emit(':ask', "okay, I've reset the game. Are you ready to being?");
+        this.emit(':ask', "okay, I've reset the game. Are you ready to begin?");
     },
 
     'AMAZON.YesIntent': function () {
