@@ -1,0 +1,16 @@
+Keywords:
+dungeons and dragons, d&d, dungeon master, game master, role playing game, combat, adventure
+
+Short Description:
+
+TableTop Pro is the next evolution of pen-and-paper RPGs.
+
+Long Description:
+
+TableTop Pro emulates the gameplay of classic pen-and-paper RPGs like Dungeons and Dragons with Alexa as the Dungeon Master. Choose your character, explore exciting locations, and battle fierce enemies in this short adventure.
+
+This application is a prototype adventure system for the MindSumo Alexa game challenge. This functions as a proof-of-concept and is not fully-featured. Check back periodically as we add more locations and more advanced options!
+
+Testing Instructions:
+Open the session and follow the instructions. Say Exit to quit. There are 5 default actions that can be taken at most points: attack, investigate, flee, diplomacy, hide. Game state is stored per userID and is reset on game win/lose, or optionally when the user continues an in-progress game.
+
