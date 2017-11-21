@@ -15,7 +15,7 @@ var combatInstance = {
 
 exports.getCombatInstance = function() {
 	return combatInstance;
-}
+};
 
 // Sets up combat instance
 exports.initializeCombat = function(scene, playerCharacter) {
@@ -37,7 +37,7 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 			if (playerSkillCheckObject.pass) {
 				var damage = dndLib.dealDamage(playerCharacter, firstEnemy);
 				updateEnemyStatus(firstEnemy);
-				output += 'You dealt ' + damage + ' damage to ' + firstEnemy.name + '.';
+				output += 'You dealt ' + damage + ' damage to ' + firstEnemy.name + '. ';
 			}
 		}
 
@@ -67,7 +67,7 @@ exports.combatRound = function(playerAction, playerSkillCheckObject, speechInput
 	}
 
 	return output;
-}
+};
 
 function createEnemyList(scene) {
     var enemyList = [];
@@ -95,7 +95,7 @@ function createEnemyList(scene) {
     }
 
     return enemyList;
-};
+}
 
 function enemyTurn(enemyList) {
 	//compile enemy actions.
@@ -119,7 +119,7 @@ function enemyTurn(enemyList) {
 	}
 
 	return enemyActions;
-};
+}
 
 function updateEnemyStatus(enemy) {
 	if (enemy.stats.health <= (enemies.monsters[enemy.type].stats.health / 2) && enemy.current_state === 'normal') {
@@ -158,7 +158,7 @@ function enemyActionHandler(action, enemy, playerCharacter) {
 	}
 
 	return buildEnemyActionDescription(enemy, action, damage, success);
-};
+}
 
 // creates a description of the action, then appends a message such as hit or missed, passed or failed
 function buildEnemyActionDescription(enemy, action, damage, success) {
@@ -172,28 +172,28 @@ function buildEnemyActionDescription(enemy, action, damage, success) {
 	// generate a generic action description if there is no description from above
 	if (!enemyActionDescription) {
 		randomActionDescriptionIndex = dndLib.rollDice(1, enemies.generic_action_descriptions[action].length);
-		enemyActionDescription  = enemies.generic_action_descriptions[action][randomAction];
+		enemyActionDescription  = enemies.generic_action_descriptions[action][randomActionDescriptionIndex];
 	}
 
 	description = (' ' + enemy.name + ' ' + enemyActionDescription);
 
 	if (success) {
 		var attackSuccessString = ', it hits, dealing ' + damage + ' damage.';
-		actionResult = action == 'attack' ? attackSuccessString : ' and it succeeds.';
+		actionResult = action === 'attack' ? attackSuccessString : ' and it succeeds.';
 	} else {
-		actionResult = action == 'attack' ? ' but it misses.' : ' but it fails.'
+		actionResult = action === 'attack' ? ' but it misses.' : ' but it fails.'
 	}
 
 	description += actionResult;
 	return description;
-};
+}
 
 function combatTest() {
 	var playerCharacter = {};
 	var playerSkillCheckObject = {
 		'roll' : 16,
 		'pass': true
-	}
+	};
 	Object.assign(playerCharacter, classes.classes.wizard);
 
 	exports.initializeCombat('forest', playerCharacter);
@@ -202,4 +202,4 @@ function combatTest() {
 		console.log(exports.combatRound('attack', playerSkillCheckObject, 'You attack.'));
 		//console.log(combatInstance.enemy_list);
 	}
-};
+}

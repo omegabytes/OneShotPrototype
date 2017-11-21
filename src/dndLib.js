@@ -130,12 +130,10 @@ exports.dealDamage = function(attackingCharacter, hitCharacter) {
 
 exports.responseBuilder = function (scene, sceneState, skill, roll, pass) {
     var successFail = pass ? "pass" : "fail";
-    var outputObject = {};
-    Object.assign(outputObject, scenes.scenes[scene][sceneState][successFail][skill]);
+    var outputObject = Object.assign({}, scenes.scenes[scene][sceneState][successFail][skill]);
 
     if (outputObject.description) {
-        var actionDescription = "You you rolled a " + roll + ". " + outputObject.description;
-        outputObject.description = actionDescription;
+        outputObject.description = "You rolled a " + roll + ". " + outputObject.description;
     } else {
         // If no description, action is useless
         outputObject.description = "You try to use the " + skill + " action, but it doesn't seem very effective at this moment.";

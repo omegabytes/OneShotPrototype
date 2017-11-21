@@ -260,7 +260,8 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
         }
         var skillCheckObject = dndLib.skillCheck(DC, dndLib.getStat(this.attributes['character'], actionRequestedByUser)); // returns object
         output = dndLib.responseBuilder(currentScene, this.attributes["sceneState"], actionRequestedByUser, skillCheckObject.roll, skillCheckObject.pass);
-        this.attributes["speechOutput"] = combatHandler.combatRound('attack', skillCheckObject, output.description) + ' What do you do?';
+
+        this.attributes["speechOutput"] = combatHandler.combatRound('attack', skillCheckObject, output.description);
 
         // check for end game conditions
         var endGame = false;
@@ -277,6 +278,7 @@ const combatBeginHandlers = Alexa.CreateStateHandler(states.COMBAT, {
             this.handler.state = states.ENDGAME;
             this.emitWithState('EndGameIntent');
         } else {
+            this.attributes["speechOutput"] += " What do you do?";
             this.attributes['repromptSpeech']  = langEN.HELP_REPROMPT;
             this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'], cardTitle, cardOutput, imageObject);
         }
@@ -327,9 +329,9 @@ const endGameHandlers = Alexa.CreateStateHandler(states.ENDGAME, {
     'EndGameIntent' : function () { //FIXME: ask the user if they want to play again
         this.attributes["gameInProgress"] = false;
         if (this.attributes['userDidDefeatEnemy']){
-            this.attributes['speechOutput'] = ' You won. Thanks for playing!';
+            this.attributes['speechOutput'] += ' You won. Thanks for playing!';
         } else {
-            this.attributes['speechOutput'] = ' You lost. Thanks for playing!';
+            this.attributes['speechOutput'] += ' You lost. Thanks for playing!';
         }
 
         this.emit(':tell', this.attributes['speechOutput']);
@@ -395,6 +397,7 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
         var cardOutput;
 
         this.attributes["speechOutput"] = response.description;
+        console.log(response);
 
         // check if the game state needs to change
         if(response.state_change){
@@ -415,10 +418,10 @@ const forestSceneHandlers = Alexa.CreateStateHandler(states.FOREST_SCENE, {
 
             // as long as the scene state doesn't change to lose, keep prompting
             if(response.scene_state_change !== "lose") {
-                this.attributes["speechOutput"] = + " " + response.description + scenes.scenes.forest.prompt;
+                this.attributes["speechOutput"] = " " + response.description + " " + scenes.scenes.forest.prompt;
             }
 
-            cardTitle = "You " + actionRequestedByUser;
+            cardTitle = "You used " + actionRequestedByUser;
             cardOutput = this.attributes["speechOutput"];
             this.emit(':askWithCard',this.attributes["speechOutput"], this.attributes['repromptSpeech'],cardTitle,cardOutput);
         }
@@ -488,9 +491,9 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
     },
     'AMAZON.HelpIntent': function () {
         var cardTitle = "New Game: Help";
-        var cardOutput = "say:\n wizard \n warrior \n rogue";
-        this.attributes['speechOutput'] = "This game is prototype adventure game platform. You will choose a character and then make a series of choices that will advance the game until you win or lose. If you get stuck at any point, ask for help. Check the Alexa app on your phone for a list of actions you can take.";
-        this.attributes['repromptSpeech'] = "Say wizard, warrior, or rogue, or ask for help.";
+        this.attributes['speechOutput'] = "This game is prototype adventure game platform. You will choose a character and then make a series of choices that will advance the game until you win or lose. If you get stuck at any point, ask for help. Check the Alexa app on your phone for a list of actions you can take. Say yes when you are ready to begin";
+        var cardOutput = this.attributes['speechOutput'];
+        this.attributes['repromptSpeech'] = "Say yes to begin.";
         this.emit(':askWithCard', this.attributes['speechOutput'], this.attributes['repromptSpeech'],cardTitle,cardOutput);
     },
     'AMAZON.RepeatIntent': function () {
