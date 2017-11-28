@@ -15,8 +15,8 @@ module.exports = {
             "USER_ACTIONS":                                 scenes.scenes,
             //output strings
             "DISPLAY_CARD_TITLE":                           "%s  - Info for %s.",
-            "HELP_MESSAGE":                                 "help message placeholder text",
-            "HELP_REPROMPT":                                "help reprompt placeholder text",
+            "HELP_MESSAGE":                                 "Say an action, or say exit to quit.",
+            "HELP_REPROMPT":                                "Say an action to see what happens. A list of actions can usually be found in the Alexa app.",
             "INCOMPLETE_REQUEST":                           "I missed part of what you were saying, could you please repeat that?",
             "LIST_OF_ACTIONS":                              "attack\n defend\n diplomacy\n flee\n hide\n investigate\n use ability",
             "NOT_FOUND_MESSAGE":                            "I\'m sorry, I currently do not know ",
