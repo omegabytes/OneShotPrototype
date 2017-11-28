@@ -144,41 +144,56 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     },
     
     // Handles class selection
+    // 'UserClassIntent' : function () {
+    //     var requestedCharacter = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
+    //     var characterList = Object.keys(classes.classes); // array of class names: ['wizard','warrior',...]
+    //     var character;
+    //     var cardTitle;
+    //     var cardOutput;
+    //     var imageObject;
+    //
+    //     if (characterList.indexOf(requestedCharacter) === -1) { // if the requested character doesn't exist in the array, it will return -1
+    //         this.attributes['speechOutput'] = "I'm sorry, you can't play as a " + requestedCharacter + " at this time. Please say wizard, warrior, or rogue.";
+    //         cardTitle = "Character Select";
+    //         cardOutput = "You can select:\nwizard \nwarrior \nrogue";
+    //         imageObject = {
+    //             smallImageUrl: "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg",
+    //             largeImageUrl: "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg"
+    //         };
+    //     } else {
+    //         character = classes.classes[requestedCharacter];
+    //         this.attributes['character'] = character;
+    //         this.attributes['speechOutput'] = dndLib.getClassDescription(requestedCharacter) + ' Say yes to confirm, or say warrior, wizard, or rogue to hear about each class. Say more info for detailed stats.';
+    //
+    //         cardTitle = this.attributes['character'];
+    //         cardOutput = dndLib.getClassDescription(this.attributes['character']);
+    //         imageObject = dndLib.getClassImages(this.attributes['character']);
+    //     }
+    //
+    //     this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
+    //
+    //     // this.emit(':tell', character);
+    // },
+
     'UserClassIntent' : function () {
-        var requestedCharacter = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
-        var characterList = Object.keys(classes.classes); // array of class names: ['wizard','warrior',...]
-        var character;
-        var cardTitle;
-        var cardOutput;
-        var imageObject;
+        this.attributes['character'] = dndLib.validateAndSetSlot(this.event.request.intent.slots.Class); // slots.Action comes from intentSchema.json - check "UserActionIntent". Returns null
 
-        if (characterList.indexOf(requestedCharacter) === -1) { // if the requested character doesn't exist in the array, it will return -1
-            this.attributes['speechOutput'] = "I'm sorry, you can't play as a " + requestedCharacter + " at this time. Please say wizard, warrior, or rogue.";
-            cardTitle = "Character Select";
-            cardOutput = "You can select:\nwizard \nwarrior \nrogue";
-            imageObject = {
-                smallImageUrl: "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg",
-                largeImageUrl: "https://s3.amazonaws.com/oneshotimages/char_select_sheet.jpg"
-            };
-        } else {
-            character = classes.classes[requestedCharacter];
-            this.attributes['character'] = character;
-            this.attributes['speechOutput'] = dndLib.getClassDescription(requestedCharacter) + ' Say yes to confirm, or say warrior, wizard, or rogue to hear about each class. Say more info for detailed stats.';
-
-            cardTitle = this.attributes['character'];
-            cardOutput = dndLib.getClassDescription(this.attributes['character']);
-            imageObject = dndLib.getClassImages(this.attributes['character']);
+        if(!this.attributes['character']) {
+            this.attributes['speechOutput'] = "That's not something you can play as right now. Please say wizard, warrior, or rogue.";
+            this.emit(':elicitSlot','UserClassIntent',this.attributes['speechOutput']);
         }
 
+        this.attributes['speechOutput'] = dndLib.getClassDescription(this.attributes['character']) + ' Say yes to confirm, or say warrior, wizard, or rogue to hear about each class. Say more info for detailed stats.';
+        var cardTitle = this.attributes['character'];
+        var cardOutput = dndLib.getClassDescription(this.attributes['character']);
+        var imageObject = dndLib.getClassImages(this.attributes['character']);
         this.emit(':askWithCard', this.attributes['speechOutput'],this.attributes['repromptSpeech'],cardTitle,cardOutput,imageObject);
-
-        // this.emit(':tell', character);
     },
 
     // user wants more information about a character
     'MoreInfoIntent' : function () {
 
-        if(this.attributes['character']) { //FIXME: this is causing incorrect character requests to drop into here
+        if(!this.attributes['character']) { //FIXME: this is causing incorrect character requests to drop into here
             this.attributes['speechOutput'] = "Which character would you like more info about?";
             this.emit(':elicitSlot','MoreInfo',this.attributes['speechOutput']);
         }
