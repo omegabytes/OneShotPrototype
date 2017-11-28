@@ -177,8 +177,8 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
             + dndLib.getStat(this.attributes['character'], 'health') + " health, "
             + dndLib.getStat(this.attributes['character'], 'attack') + " attack bonus, "
             + dndLib.getStat(this.attributes['character'], 'damageDieSides') + " damage, "
-            + dndLib.getStat(this.attributes['character'], 'perception') + " perception, "
-            + dndLib.getStat(this.attributes['character'], 'stealth') + " stealth, "
+            + dndLib.getStat(this.attributes['character'], 'investigate') + " investigate, "
+            + dndLib.getStat(this.attributes['character'], 'hide') + " hide, "
             + dndLib.getStat(this.attributes['character'], 'diplomacy') + " diplomacy.";
 
         spokenInfo += " Would you like to play as the " + this.attributes['character'] + "?";
