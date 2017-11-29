@@ -194,9 +194,10 @@ const charSelectHandlers = Alexa.CreateStateHandler(states.CHAR_SELECT, {
     'MoreInfoIntent' : function () {
 
         if(!this.attributes['character']) { //FIXME: this is causing incorrect character requests to drop into here
-            this.attributes['speechOutput'] = "Which character would you like more info about?";
-            this.emit(':elicitSlot','MoreInfo',this.attributes['speechOutput']);
+            this.attributes['speechOutput'] = "Sorry, I don't know that one, please say wizard, warrior, or rogue";
+            this.emit(':elicitSlot','UserClassIntent');
         }
+
         var cardTitle = "Info: " + this.attributes['character'];
         var imageObject = dndLib.getClassImages(this.attributes['character']);
 
@@ -502,11 +503,12 @@ const startGameHandlers = Alexa.CreateStateHandler(states.START_MODE, {
 
         // game initialization
         // FIXME: encapsulate into function
-        this.attributes['character'] = '';
+        // FIXME: you can't PUT an empty string to Dynamo, so we either need to implement DB handlers or rework the logic to handle non-empty string values
+        this.attributes['character'] = undefined; // this used to be '' but I've changed it to "none" to sidestep DB PUT issues
         this.attributes['userDidDefeatEnemy'] = false;
-        this.attributes['userHealth'] = '';
+        this.attributes['userHealth'] = undefined;
         this.attributes['sceneState'] = "enemy_not_seen";
-        this.attributes['scene'] = "";
+        this.attributes['scene'] = "character_select";
 
         this.attributes['speechOutput'] = 'Great! First, you\'ll need to choose the character you wish to play as. '
             + 'You can be a wizard, a rogue, or a warrior. What do you choose?';
